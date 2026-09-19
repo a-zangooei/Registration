@@ -18,32 +18,47 @@ import { PrintableReport } from './components/PrintableReport';
 import { ShareModal } from './components/ShareModal';
 import { ExportContent } from './components/ExportContent';
 import { BottomNav, ActiveMobileTab } from './components/BottomNav';
+import { OfflineManagerModal } from './components/OfflineManagerModal';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { decodeScheduleFromParams, syncScheduleToUrl } from './utils/urlSharing';
 import { Calendar, Clock, BookOpen, Download, AlertOctagon } from 'lucide-react';
 import { CurriculumDataset } from './types';
 import { DEFAULT_CURRICULUM } from './data/courses';
+
+const OFFLINE_STORAGE_KEY = 'medical_schedule_offline_state_v1';
 
 export default function App() {
   // Modular Curriculum dataset
   const [curriculum, setCurriculum] = useState<CurriculumDataset>(DEFAULT_CURRICULUM);
   const coursesData = curriculum.courses;
 
-  // Initialize state directly from URL query parameters if present
-  const initialUrlState = useMemo(() => {
+  // Initialize state from URL query parameters or fallback to offline local storage
+  const savedState = useMemo(() => {
     if (typeof window !== 'undefined' && window.location.search) {
-      return decodeScheduleFromParams(window.location.search);
+      const fromUrl = decodeScheduleFromParams(window.location.search);
+      if (fromUrl) return fromUrl;
+    }
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(OFFLINE_STORAGE_KEY);
+        if (stored) {
+          return JSON.parse(stored);
+        }
+      } catch (e) {
+        console.warn('Could not read offline state:', e);
+      }
     }
     return null;
   }, []);
 
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>(
-    initialUrlState?.courseIds || []
+    savedState?.courseIds || []
   );
   const [selectedPracticalGroups, setSelectedPracticalGroups] = useState<Record<string, string>>(
-    initialUrlState?.practicalGroups || {}
+    savedState?.practicalGroups || {}
   );
   const [gender, setGender] = useState<'male' | 'female'>(
-    initialUrlState?.gender || 'male'
+    savedState?.gender || 'male'
   );
   const [minUnits, setMinUnits] = useState<number>(curriculum.minUnits || 12);
   const [maxUnits, setMaxUnits] = useState<number>(curriculum.maxUnits || 14.49);
@@ -59,14 +74,27 @@ export default function App() {
   const [isSchemaModalOpen, setIsSchemaModalOpen] = useState<boolean>(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+  const [isOfflineModalOpen, setIsOfflineModalOpen] = useState<boolean>(false);
 
-  // Synchronize browser URL query parameters whenever selections change
+  // Synchronize browser URL query parameters and local offline persistence
   React.useEffect(() => {
     syncScheduleToUrl({
       courseIds: selectedCourseIds,
       practicalGroups: selectedPracticalGroups,
       gender,
     });
+    try {
+      localStorage.setItem(
+        OFFLINE_STORAGE_KEY,
+        JSON.stringify({
+          courseIds: selectedCourseIds,
+          practicalGroups: selectedPracticalGroups,
+          gender,
+        })
+      );
+    } catch (e) {
+      console.warn('Could not persist offline state:', e);
+    }
   }, [selectedCourseIds, selectedPracticalGroups, gender]);
 
   // Selections object for calculation
@@ -146,6 +174,7 @@ export default function App() {
         onOpenSchemaModal={() => setIsSchemaModalOpen(true)}
         onOpenExportModal={() => setIsExportModalOpen(true)}
         onOpenShareModal={() => setIsShareModalOpen(true)}
+        onOpenOfflineModal={() => setIsOfflineModalOpen(true)}
       />
 
       {/* Main Container */}
@@ -411,6 +440,15 @@ export default function App() {
         isOpen={isSchemaModalOpen}
         onClose={() => setIsSchemaModalOpen(false)}
       />
+
+      {/* Offline PWA & Cache Download Manager Modal */}
+      <OfflineManagerModal
+        isOpen={isOfflineModalOpen}
+        onClose={() => setIsOfflineModalOpen(false)}
+      />
+
+      {/* Persistent Offline Status Floating Indicator */}
+      <OfflineIndicator onOpenManager={() => setIsOfflineModalOpen(true)} />
 
     </div>
   );

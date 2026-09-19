@@ -10,8 +10,10 @@ import {
   Menu,
   X,
   Check,
-  ChevronLeft
+  ChevronLeft,
+  DownloadCloud,
 } from 'lucide-react';
+import { useOfflineManager } from '../hooks/useOfflineManager';
 
 interface NavbarProps {
   gender: 'male' | 'female';
@@ -23,6 +25,7 @@ interface NavbarProps {
   onOpenSchemaModal: () => void;
   onOpenExportModal: () => void;
   onOpenShareModal: () => void;
+  onOpenOfflineModal: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -35,8 +38,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSchemaModal,
   onOpenExportModal,
   onOpenShareModal,
+  onOpenOfflineModal,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isFullyCached, isOnline } = useOfflineManager();
 
   // Close mobile menu when ESC is pressed or on window resize
   useEffect(() => {
@@ -93,6 +98,22 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span>{conflictCount} تداخل</span>
               </div>
             )}
+
+            {/* Mobile Offline Status Trigger */}
+            <button
+              id="btn-offline-status-mobile"
+              type="button"
+              onClick={onOpenOfflineModal}
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all ${
+                isFullyCached
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  : 'bg-amber-50 text-amber-900 border-amber-300 animate-pulse'
+              }`}
+              title="وضعیت کارکرد آفلاین و دانلود"
+            >
+              <DownloadCloud className={`w-3.5 h-3.5 ${isFullyCached ? 'text-emerald-600' : 'text-amber-600'}`} />
+              <span className="text-[10px]">{isFullyCached ? 'آفلاین' : 'دانلود'}</span>
+            </button>
 
             {/* Mobile Menu Button */}
             <button
@@ -173,6 +194,22 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Download className="w-3.5 h-3.5" />
               <span>خروجی و چاپ</span>
+            </button>
+
+            {/* PWA & Transparent Offline Download Status Button */}
+            <button
+              id="btn-offline-status-desktop"
+              type="button"
+              onClick={onOpenOfflineModal}
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-xl border transition-all ${
+                isFullyCached
+                  ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300 shadow-2xs'
+                  : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-300 animate-pulse shadow-2xs'
+              }`}
+              title="مدیریت شفاف دانلود و دسترسی آفلاین (PWA)"
+            >
+              <DownloadCloud className={`w-3.5 h-3.5 ${isFullyCached ? 'text-emerald-600' : 'text-amber-600'}`} />
+              <span>{isFullyCached ? 'آفلاین فعال' : 'دانلود آفلاین'}</span>
             </button>
 
             {/* Schema Docs */}
@@ -275,6 +312,50 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* 2. Menu Action Items */}
             <div className="space-y-2 pt-1 border-t border-slate-100">
+              {/* PWA & Offline Manager Card */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onOpenOfflineModal();
+                }}
+                className={`w-full flex items-center justify-between p-3 rounded-xl border text-xs font-bold transition-colors text-right ${
+                  isFullyCached
+                    ? 'bg-emerald-50/80 hover:bg-emerald-100/80 border-emerald-200 text-emerald-950'
+                    : 'bg-amber-50/80 hover:bg-amber-100/80 border-amber-300 text-amber-950 animate-pulse'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className={`w-8 h-8 rounded-lg text-white flex items-center justify-center shrink-0 shadow-2xs ${
+                      isFullyCached ? 'bg-emerald-600' : 'bg-amber-600'
+                    }`}
+                  >
+                    <DownloadCloud className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span>دانلود و کارکرد آفلاین (PWA)</span>
+                      <span
+                        className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
+                          isFullyCached
+                            ? 'bg-emerald-200/90 text-emerald-900'
+                            : 'bg-amber-200/90 text-amber-900'
+                        }`}
+                      >
+                        {isFullyCached ? 'دانلود شده' : 'نیازمند دانلود'}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 font-normal">
+                      {isFullyCached
+                        ? '۱۰۰٪ فایل‌ها در حافظه ذخیره و آماده‌اند'
+                        : 'کلیک جهت دانلود و ذخیره بدون اینترنت'}
+                    </p>
+                  </div>
+                </div>
+                <ChevronLeft className="w-4 h-4 text-slate-400" />
+              </button>
+
               {/* Share Link */}
               <button
                 type="button"
