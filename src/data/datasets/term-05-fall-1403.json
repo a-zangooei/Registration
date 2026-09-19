@@ -1,0 +1,1575 @@
+{
+  "id": "med-term5-fall-1403",
+  "title": "نیمسال پنجم علوم پایه پزشکی (ورودی ۱۴۰۲/۱۴۰۳)",
+  "academicYear": "۱۴۰۳-۱۴۰۴",
+  "termNumber": 5,
+  "minUnits": 12,
+  "maxUnits": 14.49,
+  "description": "چارت درسی، برنامه هفتگی، گروه‌های عملی و گاهشمار آزمون‌های پایان‌ترم و میان‌ترم حذفی",
+  "externalPassedCourses": [
+    "1106101",
+    "110611100",
+    "1106145",
+    "1106001"
+  ],
+  "courses": [
+    {
+      "id": "c1",
+      "code": "110611000",
+      "name": "علوم تشریح سیستم ادراری - تناسلی",
+      "term": 3,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 1.1,
+        "theory": 0.85,
+        "practical": 0.25
+      },
+      "instructors": "خانم دکتر مقدم (نظری و عملی)",
+      "prerequisites": [
+        "1106101"
+      ],
+      "theorySchedule": [
+        {
+          "day": "یکشنبه",
+          "startTime": "10:00",
+          "endTime": "12:00",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [
+        {
+          "id": "c1_p1",
+          "name": "تشریح: دوشنبه ۱۸:۰۰ - ۲۰:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "18:00",
+              "endTime": "20:00",
+              "label": "عملی تشریح"
+            }
+          ]
+        },
+        {
+          "id": "c1_p2",
+          "name": "تشریح: سه‌شنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی تشریح"
+            }
+          ]
+        },
+        {
+          "id": "c1_p3",
+          "name": "تشریح: سه‌شنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی تشریح"
+            }
+          ]
+        },
+        {
+          "id": "c1_p4",
+          "name": "تشریح: سه‌شنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی تشریح"
+            }
+          ]
+        },
+        {
+          "id": "c1_p5",
+          "name": "تشریح: سه‌شنبه ۱۸:۰۰ - ۲۰:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "18:00",
+              "endTime": "20:00",
+              "label": "عملی تشریح"
+            }
+          ]
+        },
+        {
+          "id": "c1_p6",
+          "name": "بافت‌شناسی: دوشنبه ۰۸:۰۰ - ۱۰:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "08:00",
+              "endTime": "10:00",
+              "label": "عملی بافت"
+            }
+          ]
+        },
+        {
+          "id": "c1_p7",
+          "name": "بافت‌شناسی: دوشنبه ۱۰:۰۰ - ۱۲:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "10:00",
+              "endTime": "12:00",
+              "label": "عملی بافت"
+            }
+          ]
+        },
+        {
+          "id": "c1_p8",
+          "name": "بافت‌شناسی: دوشنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی بافت"
+            }
+          ]
+        },
+        {
+          "id": "c1_p9",
+          "name": "بافت‌شناسی: دوشنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی بافت"
+            }
+          ]
+        },
+        {
+          "id": "c1_p10",
+          "name": "بافت‌شناسی: دوشنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی بافت"
+            }
+          ]
+        }
+      ],
+      "midtermExam": null,
+      "finalExam": {
+        "date": "1405/11/06",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم تشریح ادراری تناسلی"
+      },
+      "examStatusDescription": "فقط پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-emerald-600",
+        "border": "border-emerald-500",
+        "text": "text-emerald-700",
+        "lightBg": "bg-emerald-50"
+      }
+    },
+    {
+      "id": "c2",
+      "code": "11061190",
+      "name": "فیزیولوژی کلیه",
+      "term": 3,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 0.8,
+        "theory": 0.7,
+        "practical": 0.1
+      },
+      "instructors": "خانم دکتر فرخ‌فال (نظری و عملی)",
+      "prerequisites": [
+        "110611100"
+      ],
+      "theorySchedule": [
+        {
+          "day": "شنبه",
+          "startTime": "08:00",
+          "endTime": "10:00",
+          "label": "نظری کلیه"
+        },
+        {
+          "day": "چهارشنبه",
+          "startTime": "10:00",
+          "endTime": "12:00",
+          "label": "نظری کلیه"
+        }
+      ],
+      "practicalGroups": [
+        {
+          "id": "c2_p1",
+          "name": "گروه ۱: دوشنبه ۰۸:۰۰ - ۱۰:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "08:00",
+              "endTime": "10:00",
+              "label": "عملی فیزیو کلیه"
+            }
+          ]
+        },
+        {
+          "id": "c2_p2",
+          "name": "گروه ۲: دوشنبه ۱۰:۰۰ - ۱۲:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "10:00",
+              "endTime": "12:00",
+              "label": "عملی فیزیو کلیه"
+            }
+          ]
+        },
+        {
+          "id": "c2_p3",
+          "name": "گروه ۳: دوشنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی فیزیو کلیه"
+            }
+          ]
+        },
+        {
+          "id": "c2_p4",
+          "name": "گروه ۴: دوشنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی فیزیو کلیه"
+            }
+          ]
+        },
+        {
+          "id": "c2_p5",
+          "name": "گروه ۵: دوشنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی فیزیو کلیه"
+            }
+          ]
+        }
+      ],
+      "midtermExam": {
+        "date": "1405/08/30",
+        "time": "10:00",
+        "isFullDeletion": true,
+        "type": "midterm",
+        "notes": "آزمون حذفی کامل در آبان‌ماه"
+      },
+      "finalExam": null,
+      "examStatusDescription": "حذفی کامل (فاقد پایان‌ترم)",
+      "colorBadge": {
+        "bg": "bg-teal-600",
+        "border": "border-teal-500",
+        "text": "text-teal-700",
+        "lightBg": "bg-teal-50"
+      }
+    },
+    {
+      "id": "c3",
+      "code": "1106146",
+      "name": "زبان تخصصی ۲",
+      "term": 3,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 3,
+        "theory": 3,
+        "practical": 0
+      },
+      "instructors": "آقای دکتر فریدونی",
+      "prerequisites": [
+        "1106145"
+      ],
+      "theorySchedule": [
+        {
+          "day": "شنبه",
+          "startTime": "10:00",
+          "endTime": "12:00",
+          "label": "جلسه اول"
+        },
+        {
+          "day": "چهارشنبه",
+          "startTime": "12:00",
+          "endTime": "14:00",
+          "label": "جلسه دوم"
+        }
+      ],
+      "practicalGroups": [],
+      "midtermExam": null,
+      "finalExam": {
+        "date": "1405/11/18",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم زبان تخصصی ۲"
+      },
+      "examStatusDescription": "فقط پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-cyan-600",
+        "border": "border-cyan-500",
+        "text": "text-cyan-700",
+        "lightBg": "bg-cyan-50"
+      }
+    },
+    {
+      "id": "c4",
+      "code": "11061030",
+      "name": "علوم تشریح سر و گردن",
+      "term": 4,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 1.7,
+        "theory": 1.2,
+        "practical": 0.5
+      },
+      "instructors": "آقای دکتر حسن‌زاده، آقای دکتر وفائی‌نژاد",
+      "prerequisites": [
+        "1106101"
+      ],
+      "theorySchedule": [
+        {
+          "day": "دوشنبه",
+          "startTime": "10:00",
+          "endTime": "12:00",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [
+        {
+          "id": "c4_p1",
+          "name": "گروه ۱: شنبه ۰۸:۰۰ - ۱۰:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "08:00",
+              "endTime": "10:00",
+              "label": "عملی تشریح سر و گردن"
+            }
+          ]
+        },
+        {
+          "id": "c4_p2",
+          "name": "گروه ۲: شنبه ۱۰:۰۰ - ۱۲:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "10:00",
+              "endTime": "12:00",
+              "label": "عملی تشریح سر و گردن"
+            }
+          ]
+        },
+        {
+          "id": "c4_p3",
+          "name": "گروه ۳: شنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی تشریح سر و گردن"
+            }
+          ]
+        },
+        {
+          "id": "c4_p4",
+          "name": "گروه ۴: شنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی تشریح سر و گردن"
+            }
+          ]
+        },
+        {
+          "id": "c4_p5",
+          "name": "گروه ۵: شنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی تشریح سر و گردن"
+            }
+          ]
+        },
+        {
+          "id": "c4_p6",
+          "name": "گروه ۶: شنبه ۱۸:۰۰ - ۲۰:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "18:00",
+              "endTime": "20:00",
+              "label": "عملی تشریح سر و گردن"
+            }
+          ]
+        }
+      ],
+      "midtermExam": {
+        "date": "1405/08/23",
+        "time": "10:00",
+        "isFullDeletion": false,
+        "type": "midterm",
+        "notes": "آزمون حذفی بخشی از درس"
+      },
+      "finalExam": {
+        "date": "1405/11/03",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم تشریح سر و گردن"
+      },
+      "examStatusDescription": "میان‌ترم + پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-blue-600",
+        "border": "border-blue-500",
+        "text": "text-blue-700",
+        "lightBg": "bg-blue-50"
+      }
+    },
+    {
+      "id": "c5",
+      "code": "11061080",
+      "name": "علوم تشریح سیستم اعصاب",
+      "term": 4,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 1.9,
+        "theory": 1.5,
+        "practical": 0.4
+      },
+      "instructors": "آقای دکتر افشار، آقای دکتر صائبی‌پور، آقای دکتر وفائی‌نژاد",
+      "prerequisites": [
+        "1106101"
+      ],
+      "theorySchedule": [
+        {
+          "day": "دوشنبه",
+          "startTime": "08:00",
+          "endTime": "10:00",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [
+        {
+          "id": "c5_p1",
+          "name": "تشریح: یکشنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "یکشنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی تشریح اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c5_p2",
+          "name": "تشریح: یکشنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "یکشنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی تشریح اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c5_p3",
+          "name": "تشریح: یکشنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "یکشنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی تشریح اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c5_p4",
+          "name": "تشریح: دوشنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی تشریح اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c5_p5",
+          "name": "تشریح: دوشنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی تشریح اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c5_p6",
+          "name": "تشریح: دوشنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی تشریح اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c5_p7",
+          "name": "بافت اعصاب: شنبه ۰۸:۰۰ - ۱۰:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "08:00",
+              "endTime": "10:00",
+              "label": "عملی بافت اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c5_p8",
+          "name": "بافت اعصاب: شنبه ۱۰:۰۰ - ۱۲:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "10:00",
+              "endTime": "12:00",
+              "label": "عملی بافت اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c5_p9",
+          "name": "بافت اعصاب: شنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی بافت اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c5_p10",
+          "name": "بافت اعصاب: شنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی بافت اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c5_p11",
+          "name": "بافت اعصاب: شنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی بافت اعصاب"
+            }
+          ]
+        }
+      ],
+      "midtermExam": {
+        "date": "1405/10/05",
+        "time": "10:00",
+        "isFullDeletion": false,
+        "type": "midterm",
+        "notes": "آزمون حذفی بخشی از درس"
+      },
+      "finalExam": {
+        "date": "1405/10/29",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم تشریح سیستم اعصاب"
+      },
+      "examStatusDescription": "میان‌ترم + پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-indigo-600",
+        "border": "border-indigo-500",
+        "text": "text-indigo-700",
+        "lightBg": "bg-indigo-50"
+      }
+    },
+    {
+      "id": "c6",
+      "code": "1106128",
+      "name": "انگل‌شناسی پزشکی",
+      "term": 4,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 2,
+        "theory": 1.65,
+        "practical": 0.35
+      },
+      "instructors": "دکتر توکلی، دکتر بهروان، دکتر پقه",
+      "prerequisites": [],
+      "theorySchedule": [
+        {
+          "day": "یکشنبه",
+          "startTime": "10:00",
+          "endTime": "12:00",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [
+        {
+          "id": "c6_p1",
+          "name": "گروه ۱: سه‌شنبه ۰۸:۰۰ - ۱۰:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "08:00",
+              "endTime": "10:00",
+              "label": "عملی انگل‌شناسی"
+            }
+          ]
+        },
+        {
+          "id": "c6_p2",
+          "name": "گروه ۲: سه‌شنبه ۱۰:۰۰ - ۱۲:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "10:00",
+              "endTime": "12:00",
+              "label": "عملی انگل‌شناسی"
+            }
+          ]
+        },
+        {
+          "id": "c6_p3",
+          "name": "گروه ۳: سه‌شنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی انگل‌شناسی"
+            }
+          ]
+        },
+        {
+          "id": "c6_p4",
+          "name": "گروه ۴: سه‌شنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی انگل‌شناسی"
+            }
+          ]
+        },
+        {
+          "id": "c6_p5",
+          "name": "گروه ۵: سه‌شنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی انگل‌شناسی"
+            }
+          ]
+        }
+      ],
+      "midtermExam": {
+        "date": "1405/09/21",
+        "time": "10:00",
+        "isFullDeletion": false,
+        "type": "midterm",
+        "notes": "آزمون حذفی بخشی از درس"
+      },
+      "finalExam": {
+        "date": "1405/11/18",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم انگل‌شناسی"
+      },
+      "examStatusDescription": "میان‌ترم + پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-violet-600",
+        "border": "border-violet-500",
+        "text": "text-violet-700",
+        "lightBg": "bg-violet-50"
+      }
+    },
+    {
+      "id": "c7",
+      "code": "11061310",
+      "name": "ایمنی‌شناسی پزشکی",
+      "term": 4,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 2,
+        "theory": 1.75,
+        "practical": 0.25
+      },
+      "instructors": "دکتر فریدونی، دکتر رفیعی، دکتر عنانی... و دکتر مهدوی",
+      "prerequisites": [],
+      "theorySchedule": [
+        {
+          "day": "چهارشنبه",
+          "startTime": "10:00",
+          "endTime": "12:00",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [
+        {
+          "id": "c7_p1",
+          "name": "گروه ۱: سه‌شنبه ۰۸:۰۰ - ۱۰:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "08:00",
+              "endTime": "10:00",
+              "label": "عملی ایمنی‌شناسی"
+            }
+          ]
+        },
+        {
+          "id": "c7_p2",
+          "name": "گروه ۲: سه‌شنبه ۱۰:۰۰ - ۱۲:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "10:00",
+              "endTime": "12:00",
+              "label": "عملی ایمنی‌شناسی"
+            }
+          ]
+        },
+        {
+          "id": "c7_p3",
+          "name": "گروه ۳: سه‌شنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی ایمنی‌شناسی"
+            }
+          ]
+        },
+        {
+          "id": "c7_p4",
+          "name": "گروه ۴: سه‌شنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی ایمنی‌شناسی"
+            }
+          ]
+        },
+        {
+          "id": "c7_p5",
+          "name": "گروه ۵: سه‌شنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی ایمنی‌شناسی"
+            }
+          ]
+        }
+      ],
+      "midtermExam": {
+        "date": "1405/09/14",
+        "time": "10:00",
+        "isFullDeletion": false,
+        "type": "midterm",
+        "notes": "آزمون حذفی بخشی از درس"
+      },
+      "finalExam": {
+        "date": "1405/10/26",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم ایمنی‌شناسی پزشکی"
+      },
+      "examStatusDescription": "میان‌ترم + پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-purple-600",
+        "border": "border-purple-500",
+        "text": "text-purple-700",
+        "lightBg": "bg-purple-50"
+      }
+    },
+    {
+      "id": "c8",
+      "code": "1106134",
+      "name": "اصول اپیدمیولوژی",
+      "term": 4,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 2,
+        "theory": 2,
+        "practical": 0
+      },
+      "instructors": "آقای مهندس شریف‌زاده، آقای دکتر بیجاری",
+      "prerequisites": [],
+      "theorySchedule": [
+        {
+          "day": "چهارشنبه",
+          "startTime": "16:00",
+          "endTime": "18:00",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [],
+      "midtermExam": {
+        "date": "1405/09/28",
+        "time": "10:00",
+        "isFullDeletion": false,
+        "type": "midterm",
+        "notes": "آزمون حذفی بخشی از درس"
+      },
+      "finalExam": {
+        "date": "1405/11/06",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم اصول اپیدمیولوژی"
+      },
+      "examStatusDescription": "میان‌ترم + پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-fuchsia-600",
+        "border": "border-fuchsia-500",
+        "text": "text-fuchsia-700",
+        "lightBg": "bg-fuchsia-50"
+      }
+    },
+    {
+      "id": "c9",
+      "code": "1106002",
+      "name": "اندیشه اسلامی ۲",
+      "term": 5,
+      "courseTypeString": "شناور عمومی",
+      "category": "general",
+      "units": {
+        "total": 2,
+        "theory": 2,
+        "practical": 0
+      },
+      "instructors": "حاج آقا زنگوئی",
+      "prerequisites": [
+        "1106001"
+      ],
+      "theorySchedule": [],
+      "genderSchedules": {
+        "female": [
+          {
+            "day": "یکشنبه",
+            "startTime": "08:00",
+            "endTime": "10:00",
+            "label": "خواهران"
+          }
+        ],
+        "male": [
+          {
+            "day": "یکشنبه",
+            "startTime": "10:00",
+            "endTime": "12:00",
+            "label": "برادران"
+          }
+        ]
+      },
+      "practicalGroups": [],
+      "midtermExam": null,
+      "finalExam": {
+        "date": "1405/11/07",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم اندیشه اسلامی ۲"
+      },
+      "examStatusDescription": "فقط پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-amber-600",
+        "border": "border-amber-500",
+        "text": "text-amber-700",
+        "lightBg": "bg-amber-50"
+      }
+    },
+    {
+      "id": "c10",
+      "code": "110380",
+      "name": "اصول و مبانی مدیریت خطر، حوادث و بلایا",
+      "term": 5,
+      "courseTypeString": "شناور پایه",
+      "category": "specialized",
+      "units": {
+        "total": 2,
+        "theory": 1,
+        "practical": 1
+      },
+      "instructors": "آقای دکتر حسینی",
+      "prerequisites": [],
+      "theorySchedule": [
+        {
+          "day": "سه‌شنبه",
+          "startTime": "08:00",
+          "endTime": "10:00",
+          "location": "کلاس ۱۱۱",
+          "label": "نظری و عملی"
+        }
+      ],
+      "practicalGroups": [],
+      "midtermExam": null,
+      "finalExam": {
+        "date": "1405/11/03",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم مدیریت خطر، حوادث و بلایا"
+      },
+      "examStatusDescription": "فقط پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-orange-600",
+        "border": "border-orange-500",
+        "text": "text-orange-700",
+        "lightBg": "bg-orange-50"
+      }
+    },
+    {
+      "id": "c11",
+      "code": "1106130",
+      "name": "ویروس‌شناسی پزشکی",
+      "term": 5,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 1,
+        "theory": 1,
+        "practical": 0
+      },
+      "instructors": "آقای دکتر جوانمرد",
+      "prerequisites": [],
+      "theorySchedule": [
+        {
+          "day": "چهارشنبه",
+          "startTime": "10:00",
+          "endTime": "12:00",
+          "location": "کلاس ۱۱۶",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [],
+      "midtermExam": {
+        "date": "1405/09/28",
+        "time": "10:00",
+        "isFullDeletion": true,
+        "type": "midterm",
+        "notes": "آزمون حذفی کامل در آذرماه"
+      },
+      "finalExam": null,
+      "examStatusDescription": "حذفی کامل (فاقد پایان‌ترم)",
+      "colorBadge": {
+        "bg": "bg-rose-600",
+        "border": "border-rose-500",
+        "text": "text-rose-700",
+        "lightBg": "bg-rose-50"
+      }
+    },
+    {
+      "id": "c12",
+      "code": "1106129",
+      "name": "قارچ‌شناسی پزشکی",
+      "term": 5,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 1,
+        "theory": 0.9,
+        "practical": 0.1
+      },
+      "instructors": "آقای دکتر قجقی",
+      "prerequisites": [],
+      "theorySchedule": [
+        {
+          "day": "سه‌شنبه",
+          "startTime": "10:00",
+          "endTime": "12:00",
+          "location": "کلاس ۱۱۱",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [
+        {
+          "id": "c12_p1",
+          "name": "گروه ۱: سه‌شنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی قارچ‌شناسی"
+            }
+          ]
+        },
+        {
+          "id": "c12_p2",
+          "name": "گروه ۲: سه‌شنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی قارچ‌شناسی"
+            }
+          ]
+        },
+        {
+          "id": "c12_p3",
+          "name": "گروه ۳: سه‌شنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "سه‌شنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی قارچ‌شناسی"
+            }
+          ]
+        }
+      ],
+      "midtermExam": {
+        "date": "1405/09/07",
+        "time": "10:00",
+        "isFullDeletion": true,
+        "type": "midterm",
+        "notes": "آزمون حذفی کامل در آذرماه"
+      },
+      "finalExam": null,
+      "examStatusDescription": "حذفی کامل (فاقد پایان‌ترم)",
+      "colorBadge": {
+        "bg": "bg-pink-600",
+        "border": "border-pink-500",
+        "text": "text-pink-700",
+        "lightBg": "bg-pink-50"
+      }
+    },
+    {
+      "id": "c13",
+      "code": "110614752",
+      "name": "پاتولوژی عمومی نظری",
+      "term": 5,
+      "courseTypeString": "شناور پایه",
+      "category": "specialized",
+      "units": {
+        "total": 3,
+        "theory": 3,
+        "practical": 0
+      },
+      "instructors": "دکتر زردست، دکتر بهشتی، دکتر حسن‌زاده، دکتر دهقانی، دکتر محمدی‌فرد",
+      "prerequisites": [
+        "1106101",
+        "11061310"
+      ],
+      "theorySchedule": [
+        {
+          "day": "دوشنبه",
+          "startTime": "08:00",
+          "endTime": "10:00",
+          "label": "جلسه اول"
+        },
+        {
+          "day": "چهارشنبه",
+          "startTime": "08:00",
+          "endTime": "10:00",
+          "location": "کلاس ۱۱۶",
+          "label": "جلسه دوم"
+        }
+      ],
+      "practicalGroups": [],
+      "midtermExam": {
+        "date": "1405/08/16",
+        "time": "10:00",
+        "isFullDeletion": false,
+        "type": "midterm",
+        "notes": "آزمون حذفی بخشی از درس در آبان‌ماه"
+      },
+      "finalExam": {
+        "date": "1405/10/26",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم پاتولوژی عمومی نظری"
+      },
+      "examStatusDescription": "میان‌ترم + پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-red-600",
+        "border": "border-red-500",
+        "text": "text-red-700",
+        "lightBg": "bg-red-50"
+      }
+    },
+    {
+      "id": "c14",
+      "code": "1106153",
+      "name": "پاتولوژی عمومی عملی",
+      "term": 5,
+      "courseTypeString": "شناور پایه",
+      "category": "specialized",
+      "units": {
+        "total": 1,
+        "theory": 0,
+        "practical": 1
+      },
+      "instructors": "دکتر زردست، دکتر بهشتی، دکتر حسن‌زاده، دکتر محمدی‌فرد",
+      "prerequisites": [],
+      "corequisites": [
+        "110614752"
+      ],
+      "theorySchedule": [],
+      "practicalGroups": [
+        {
+          "id": "c14_p1",
+          "name": "گروه ۱: یکشنبه ۰۸:۰۰ - ۱۰:۰۰",
+          "slots": [
+            {
+              "day": "یکشنبه",
+              "startTime": "08:00",
+              "endTime": "10:00",
+              "label": "عملی پاتولوژی"
+            }
+          ]
+        },
+        {
+          "id": "c14_p2",
+          "name": "گروه ۲: یکشنبه ۱۰:۰۰ - ۱۲:۰۰",
+          "slots": [
+            {
+              "day": "یکشنبه",
+              "startTime": "10:00",
+              "endTime": "12:00",
+              "label": "عملی پاتولوژی"
+            }
+          ]
+        },
+        {
+          "id": "c14_p3",
+          "name": "گروه ۳: یکشنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "یکشنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی پاتولوژی"
+            }
+          ]
+        },
+        {
+          "id": "c14_p4",
+          "name": "گروه ۴: یکشنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "یکشنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی پاتولوژی"
+            }
+          ]
+        },
+        {
+          "id": "c14_p5",
+          "name": "گروه ۵: یکشنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "یکشنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی پاتولوژی"
+            }
+          ]
+        }
+      ],
+      "midtermExam": null,
+      "finalExam": null,
+      "examStatusDescription": "ارزیابی کلاسی / عملی در طول نیمسال",
+      "colorBadge": {
+        "bg": "bg-stone-700",
+        "border": "border-stone-600",
+        "text": "text-stone-700",
+        "lightBg": "bg-stone-100"
+      }
+    },
+    {
+      "id": "c15",
+      "code": "1106164",
+      "name": "اصول پایه فارماکولوژی پزشکی",
+      "term": 5,
+      "courseTypeString": "شناور پایه",
+      "category": "specialized",
+      "units": {
+        "total": 1,
+        "theory": 1,
+        "practical": 0
+      },
+      "instructors": "آقای دکتر کیانی",
+      "prerequisites": [],
+      "theorySchedule": [
+        {
+          "day": "دوشنبه",
+          "startTime": "14:00",
+          "endTime": "16:00",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [],
+      "midtermExam": {
+        "date": "1405/10/05",
+        "time": "10:00",
+        "isFullDeletion": true,
+        "type": "midterm",
+        "notes": "آزمون حذفی کامل در دی‌ماه"
+      },
+      "finalExam": null,
+      "examStatusDescription": "حذفی کامل (فاقد پایان‌ترم)",
+      "colorBadge": {
+        "bg": "bg-emerald-700",
+        "border": "border-emerald-600",
+        "text": "text-emerald-800",
+        "lightBg": "bg-emerald-50"
+      }
+    },
+    {
+      "id": "c16",
+      "code": "1106021",
+      "name": "فرهنگ و تمدن اسلامی",
+      "term": 5,
+      "courseTypeString": "شناور عمومی",
+      "category": "general",
+      "units": {
+        "total": 2,
+        "theory": 2,
+        "practical": 0
+      },
+      "instructors": "خواهران: خانم الهامی‌پور | برادران: آقای دکتر کوچی",
+      "prerequisites": [],
+      "theorySchedule": [],
+      "genderSchedules": {
+        "male": [
+          {
+            "day": "دوشنبه",
+            "startTime": "16:00",
+            "endTime": "18:00",
+            "label": "برادران (دکتر کوچی)"
+          }
+        ],
+        "female": [
+          {
+            "day": "سه‌شنبه",
+            "startTime": "14:00",
+            "endTime": "16:00",
+            "label": "خواهران (خانم الهامی‌پور)"
+          }
+        ]
+      },
+      "practicalGroups": [],
+      "midtermExam": null,
+      "finalExam": {
+        "date": "1405/10/29",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم فرهنگ و تمدن اسلامی"
+      },
+      "examStatusDescription": "فقط پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-amber-700",
+        "border": "border-amber-600",
+        "text": "text-amber-800",
+        "lightBg": "bg-amber-50"
+      }
+    },
+    {
+      "id": "c17",
+      "code": "1106007",
+      "name": "آیین زندگی (اخلاق کاربردی)",
+      "term": 5,
+      "courseTypeString": "شناور عمومی",
+      "category": "general",
+      "units": {
+        "total": 2,
+        "theory": 2,
+        "practical": 0
+      },
+      "instructors": "خواهران: آقای اوحدی | برادران: آقای تابعی",
+      "prerequisites": [],
+      "theorySchedule": [],
+      "genderSchedules": {
+        "female": [
+          {
+            "day": "شنبه",
+            "startTime": "14:00",
+            "endTime": "16:00",
+            "label": "خواهران (آقای اوحدی)"
+          }
+        ],
+        "male": [
+          {
+            "day": "سه‌شنبه",
+            "startTime": "16:00",
+            "endTime": "18:00",
+            "label": "برادران (آقای تابعی)"
+          }
+        ]
+      },
+      "practicalGroups": [],
+      "midtermExam": null,
+      "finalExam": {
+        "date": "1405/11/06",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم آیین زندگی"
+      },
+      "examStatusDescription": "فقط پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-yellow-600",
+        "border": "border-yellow-500",
+        "text": "text-yellow-700",
+        "lightBg": "bg-yellow-50"
+      }
+    },
+    {
+      "id": "c18",
+      "code": "1106114",
+      "name": "فیزیولوژی اعصاب و حواس ویژه",
+      "term": 5,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 1.5,
+        "theory": 1.4,
+        "practical": 0.1
+      },
+      "instructors": "دکتر مصباح‌زاده، دکتر طاهر گورابی، دکتر صائبی‌پور",
+      "prerequisites": [
+        "110611100"
+      ],
+      "theorySchedule": [
+        {
+          "day": "دوشنبه",
+          "startTime": "10:00",
+          "endTime": "12:00",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [
+        {
+          "id": "c18_p1",
+          "name": "گروه ۱: شنبه ۰۸:۰۰ - ۱۰:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "08:00",
+              "endTime": "10:00",
+              "label": "عملی فیزیو اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c18_p2",
+          "name": "گروه ۲: شنبه ۱۰:۰۰ - ۱۲:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "10:00",
+              "endTime": "12:00",
+              "label": "عملی فیزیو اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c18_p3",
+          "name": "گروه ۳: شنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی فیزیو اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c18_p4",
+          "name": "گروه ۴: شنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی فیزیو اعصاب"
+            }
+          ]
+        },
+        {
+          "id": "c18_p5",
+          "name": "گروه ۵: شنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی فیزیو اعصاب"
+            }
+          ]
+        }
+      ],
+      "midtermExam": null,
+      "finalExam": {
+        "date": "1405/11/11",
+        "time": "08:30",
+        "type": "final",
+        "notes": "پایان‌ترم فیزیولوژی اعصاب و حواس ویژه"
+      },
+      "examStatusDescription": "فقط پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-teal-700",
+        "border": "border-teal-600",
+        "text": "text-teal-800",
+        "lightBg": "bg-teal-50"
+      }
+    },
+    {
+      "id": "c19",
+      "code": "11061090",
+      "name": "علوم تشریح سیستم حواس ویژه",
+      "term": 5,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 0.9,
+        "theory": 0.8,
+        "practical": 0.1
+      },
+      "instructors": "آقای دکتر حسن‌زاده",
+      "prerequisites": [
+        "1106101"
+      ],
+      "theorySchedule": [
+        {
+          "day": "شنبه",
+          "startTime": "18:00",
+          "endTime": "20:00",
+          "label": "نظری"
+        }
+      ],
+      "practicalGroups": [
+        {
+          "id": "c19_p1",
+          "name": "گروه ۱: شنبه ۰۸:۰۰ - ۱۰:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "08:00",
+              "endTime": "10:00",
+              "label": "عملی تشریح حواس"
+            }
+          ]
+        },
+        {
+          "id": "c19_p2",
+          "name": "گروه ۲: شنبه ۱۰:۰۰ - ۱۲:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "10:00",
+              "endTime": "12:00",
+              "label": "عملی تشریح حواس"
+            }
+          ]
+        },
+        {
+          "id": "c19_p3",
+          "name": "گروه ۳: شنبه ۱۲:۰۰ - ۱۴:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "12:00",
+              "endTime": "14:00",
+              "label": "عملی تشریح حواس"
+            }
+          ]
+        },
+        {
+          "id": "c19_p4",
+          "name": "گروه ۴: شنبه ۱۴:۰۰ - ۱۶:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "14:00",
+              "endTime": "16:00",
+              "label": "عملی تشریح حواس"
+            }
+          ]
+        },
+        {
+          "id": "c19_p5",
+          "name": "گروه ۵: شنبه ۱۶:۰۰ - ۱۸:۰۰",
+          "slots": [
+            {
+              "day": "شنبه",
+              "startTime": "16:00",
+              "endTime": "18:00",
+              "label": "عملی تشریح حواس"
+            }
+          ]
+        }
+      ],
+      "midtermExam": {
+        "date": "1405/09/21",
+        "time": "10:00",
+        "isFullDeletion": true,
+        "type": "midterm",
+        "notes": "آزمون حذفی کامل در آذرماه"
+      },
+      "finalExam": null,
+      "examStatusDescription": "حذفی کامل (فاقد پایان‌ترم)",
+      "colorBadge": {
+        "bg": "bg-sky-600",
+        "border": "border-sky-500",
+        "text": "text-sky-700",
+        "lightBg": "bg-sky-50"
+      }
+    }
+  ]
+}

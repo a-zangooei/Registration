@@ -3,7 +3,6 @@ import {
   BookOpen,
   UserCheck,
   ShieldAlert,
-  Sparkles,
   RotateCcw,
   Code2,
   Download,
@@ -20,7 +19,6 @@ interface NavbarProps {
   conflictCount: number;
   selectedCount: number;
   totalUnits: number;
-  onSelectRecommended: () => void;
   onReset: () => void;
   onOpenSchemaModal: () => void;
   onOpenExportModal: () => void;
@@ -33,7 +31,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   conflictCount,
   selectedCount,
   totalUnits,
-  onSelectRecommended,
   onReset,
   onOpenSchemaModal,
   onOpenExportModal,
@@ -178,18 +175,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>خروجی و چاپ</span>
             </button>
 
-            {/* Quick action: Recommended Combo */}
-            <button
-              id="btn-recommended-combo-desktop"
-              type="button"
-              onClick={onSelectRecommended}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl bg-teal-50 text-teal-800 border border-teal-200 hover:bg-teal-100 transition-colors"
-              title="چینش استاندارد بدون تداخل تا سقف ۱۴ واحد"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-teal-600" />
-              <span>ترکیب پیشنهادی</span>
-            </button>
-
             {/* Schema Docs */}
             <button
               id="btn-schema-modal-desktop"
@@ -309,27 +294,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                 </div>
                 <ChevronLeft className="w-4 h-4 text-indigo-500" />
-              </button>
-
-              {/* Recommended Combo */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onSelectRecommended();
-                }}
-                className="w-full flex items-center justify-between p-3 rounded-xl bg-teal-50/70 hover:bg-teal-100/70 text-teal-950 border border-teal-200 text-xs font-bold transition-colors text-right"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center shrink-0">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span>ترکیب پیشنهادی بدون تداخل</span>
-                    <p className="text-[10px] text-teal-700 font-normal">چینش خودکار تا سقف ۱۴ واحد مجاز</p>
-                  </div>
-                </div>
-                <ChevronLeft className="w-4 h-4 text-teal-600" />
               </button>
 
               {/* Export Trigger */}

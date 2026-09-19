@@ -4,7 +4,6 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { COURSES_DATA } from './data/courses';
 import { Course, StudentSelections } from './types';
 import { evaluateAllConflicts, getHoverConflicts } from './utils/conflictDetector';
 import { Navbar } from './components/Navbar';
@@ -20,15 +19,15 @@ import { ShareModal } from './components/ShareModal';
 import { ExportContent } from './components/ExportContent';
 import { BottomNav, ActiveMobileTab } from './components/BottomNav';
 import { decodeScheduleFromParams, syncScheduleToUrl } from './utils/urlSharing';
-import { Calendar, Clock, BookOpen, Download, AlertOctagon, Sparkles } from 'lucide-react';
-
-// Recommended starter combo (within 12 to 14.49 units)
-const DEFAULT_SELECTED_IDS = ['c1', 'c2', 'c4', 'c6', 'c7', 'c8', 'c9', 'c10'];
-
-// Default practical groups: Empty record by default so ALL practical groups appear as tentative/hatched ranges!
-const DEFAULT_PRACTICAL_GROUPS: Record<string, string> = {};
+import { Calendar, Clock, BookOpen, Download, AlertOctagon } from 'lucide-react';
+import { CurriculumDataset } from './types';
+import { DEFAULT_CURRICULUM } from './data/courses';
 
 export default function App() {
+  // Modular Curriculum dataset
+  const [curriculum, setCurriculum] = useState<CurriculumDataset>(DEFAULT_CURRICULUM);
+  const coursesData = curriculum.courses;
+
   // Initialize state directly from URL query parameters if present
   const initialUrlState = useMemo(() => {
     if (typeof window !== 'undefined' && window.location.search) {
@@ -38,18 +37,16 @@ export default function App() {
   }, []);
 
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>(
-    initialUrlState?.courseIds && initialUrlState.courseIds.length > 0
-      ? initialUrlState.courseIds
-      : DEFAULT_SELECTED_IDS
+    initialUrlState?.courseIds || []
   );
   const [selectedPracticalGroups, setSelectedPracticalGroups] = useState<Record<string, string>>(
-    initialUrlState?.practicalGroups || DEFAULT_PRACTICAL_GROUPS
+    initialUrlState?.practicalGroups || {}
   );
   const [gender, setGender] = useState<'male' | 'female'>(
     initialUrlState?.gender || 'male'
   );
-  const [minUnits, setMinUnits] = useState<number>(12);
-  const [maxUnits, setMaxUnits] = useState<number>(14.49);
+  const [minUnits, setMinUnits] = useState<number>(curriculum.minUnits || 12);
+  const [maxUnits, setMaxUnits] = useState<number>(curriculum.maxUnits || 14.49);
   const [hoveredCourseId, setHoveredCourseId] = useState<string | null>(null);
   
   // Desktop tab: schedule vs exams
@@ -86,8 +83,8 @@ export default function App() {
 
   // Selected course objects
   const selectedCourses = useMemo(
-    () => COURSES_DATA.filter((c) => selectedCourseIds.includes(c.id)),
-    [selectedCourseIds]
+    () => coursesData.filter((c) => selectedCourseIds.includes(c.id)),
+    [coursesData, selectedCourseIds]
   );
 
   // Evaluate conflicts for all selected courses
@@ -126,18 +123,6 @@ export default function App() {
     }));
   };
 
-  const handleSelectRecommended = () => {
-    setSelectedCourseIds(DEFAULT_SELECTED_IDS);
-    // Lock specific non-overlapping groups for the recommended combo
-    setSelectedPracticalGroups({
-      c1: 'c1_p2',
-      c2: 'c2_p1',
-      c4: 'c4_p3',
-      c6: 'c6_p4',
-      c7: 'c7_p5',
-    });
-  };
-
   const handleReset = () => {
     setSelectedCourseIds([]);
     setSelectedPracticalGroups({});
@@ -157,7 +142,6 @@ export default function App() {
         conflictCount={totalConflictCount}
         selectedCount={selectedCourseIds.length}
         totalUnits={Number(selectedCourses.reduce((sum, c) => sum + c.units.total, 0).toFixed(2))}
-        onSelectRecommended={handleSelectRecommended}
         onReset={handleReset}
         onOpenSchemaModal={() => setIsSchemaModalOpen(true)}
         onOpenExportModal={() => setIsExportModalOpen(true)}
@@ -174,13 +158,13 @@ export default function App() {
           onMinUnitsChange={setMinUnits}
           onMaxUnitsChange={setMaxUnits}
           selectedCourses={selectedCourses}
-          allCourses={COURSES_DATA}
+          allCourses={coursesData}
         />
 
         {/* Live Conflict Summary Banner */}
         <ConflictSummary
           conflictMap={conflictMap}
-          courses={COURSES_DATA}
+          courses={coursesData}
           selectedCourseIds={selectedCourseIds}
         />
 
@@ -253,7 +237,7 @@ export default function App() {
           ) : (
             <ExamTimeline
               selectedCourses={selectedCourses}
-              allCourses={COURSES_DATA}
+              allCourses={coursesData}
             />
           )}
 
@@ -272,7 +256,7 @@ export default function App() {
             </div>
 
             <CourseList
-              courses={COURSES_DATA}
+              courses={coursesData}
               selectedCourseIds={selectedCourseIds}
               selectedPracticalGroups={selectedPracticalGroups}
               conflictMap={conflictMap}
@@ -309,7 +293,7 @@ export default function App() {
               </div>
 
               <CourseList
-                courses={COURSES_DATA}
+                courses={coursesData}
                 selectedCourseIds={selectedCourseIds}
                 selectedPracticalGroups={selectedPracticalGroups}
                 conflictMap={conflictMap}
@@ -342,7 +326,7 @@ export default function App() {
             <div>
               <ExamTimeline
                 selectedCourses={selectedCourses}
-                allCourses={COURSES_DATA}
+                allCourses={coursesData}
               />
             </div>
           )}

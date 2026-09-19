@@ -1,0 +1,10 @@
+[
+  {
+    "id": "med-term5-fall-1403",
+    "title": "نیمسال پنجم علوم پایه پزشکی (ورودی ۱۴۰۲/۱۴۰۳)",
+    "academicYear": "۱۴۰۳-۱۴۰۴",
+    "termNumber": 5,
+    "path": "./datasets/term-05-fall-1403.json",
+    "isDefault": true
+  }
+]

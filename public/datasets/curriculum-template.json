@@ -1,0 +1,71 @@
+{
+  "$schema": "./curriculum.schema.json",
+  "id": "custom-term-id",
+  "title": "عنوان دوره تحصیلی (مثلاً: نیمسال چهارم پزشکی)",
+  "academicYear": "۱۴۰۳-۱۴۰۴",
+  "termNumber": 4,
+  "minUnits": 12,
+  "maxUnits": 20,
+  "description": "توضیحات دوره تحصیلی",
+  "externalPassedCourses": [
+    "1106101"
+  ],
+  "courses": [
+    {
+      "id": "c1",
+      "code": "110611000",
+      "name": "نام درس نمونه",
+      "term": 4,
+      "courseTypeString": "الزامی پایه",
+      "category": "specialized",
+      "units": {
+        "total": 2,
+        "theory": 1.5,
+        "practical": 0.5
+      },
+      "instructors": "دکتر نمونه",
+      "prerequisites": [],
+      "corequisites": [],
+      "theorySchedule": [
+        {
+          "day": "شنبه",
+          "startTime": "08:00",
+          "endTime": "10:00",
+          "label": "نظری"
+        }
+      ],
+      "genderSchedules": {
+        "male": [],
+        "female": []
+      },
+      "practicalGroups": [
+        {
+          "id": "c1_p1",
+          "name": "گروه ۱ عملی: دوشنبه ۱۰ تا ۱۲",
+          "slots": [
+            {
+              "day": "دوشنبه",
+              "startTime": "10:00",
+              "endTime": "12:00",
+              "label": "عملی"
+            }
+          ]
+        }
+      ],
+      "midtermExam": null,
+      "finalExam": {
+        "date": "1404/10/25",
+        "time": "09:00",
+        "type": "final",
+        "notes": "پایان‌ترم متمرکز"
+      },
+      "examStatusDescription": "فقط پایان‌ترم",
+      "colorBadge": {
+        "bg": "bg-teal-600",
+        "border": "border-teal-500",
+        "text": "text-teal-700",
+        "lightBg": "bg-teal-50"
+      }
+    }
+  ]
+}

@@ -90,3 +90,25 @@ export interface StudentSelections {
   minUnits: number;
   maxUnits: number;
 }
+
+export interface CurriculumDataset {
+  id: string;
+  title: string;
+  academicYear: string;
+  termNumber: number;
+  minUnits: number;
+  maxUnits: number;
+  description?: string;
+  externalPassedCourses: string[];
+  courses: Course[];
+}
+
+export interface SemesterManifestItem {
+  id: string;
+  title: string;
+  academicYear: string;
+  termNumber: number;
+  path: string;
+  isDefault?: boolean;
+}
+
