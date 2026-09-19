@@ -100,6 +100,7 @@ export function useOfflineManager() {
         './datasets/manifest.json',
         './datasets/term-05-fall-1403.json',
         './datasets/curriculum-template.json',
+        'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap',
       ];
 
       // Also dynamically collect loaded script and style bundles in current DOM
@@ -122,8 +123,30 @@ export function useOfflineManager() {
           // Fetch with no-cache to get latest version from server
           const response = await fetch(url, { cache: 'no-cache' });
           if (response.ok || response.type === 'opaque') {
-            await cache.put(url, response);
+            await cache.put(url, response.clone());
             loadedCount++;
+
+            // If it's the Google Fonts CSS, parse and precache the actual woff2 font files
+            if (url.includes('fonts.googleapis.com/css')) {
+              try {
+                const cssText = await response.text();
+                const fontUrls = Array.from(cssText.matchAll(/url\((https:\/\/[^)]+)\)/g)).map(
+                  (m) => m[1]
+                );
+                for (const fontUrl of fontUrls) {
+                  try {
+                    const fontResp = await fetch(fontUrl, { mode: 'cors' });
+                    if (fontResp.ok) {
+                      await cache.put(fontUrl, fontResp);
+                    }
+                  } catch (fontErr) {
+                    console.warn(`Could not cache font binary ${fontUrl}:`, fontErr);
+                  }
+                }
+              } catch (cssErr) {
+                console.warn('Could not parse Google Fonts CSS for offline fonts:', cssErr);
+              }
+            }
           }
         } catch (fetchErr) {
           console.warn(`Could not precache ${url}:`, fetchErr);

@@ -62,11 +62,42 @@ export default defineConfig(() => {
           navigateFallback: 'index.html',
           runtimeCaching: [
             {
+              // Google Fonts Stylesheets
+              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'google-fonts-stylesheets',
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
+              },
+            },
+            {
+              // Google Fonts Webfont files (woff2)
+              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'google-fonts-webfonts',
+                expiration: {
+                  maxEntries: 30,
+                  maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
+              },
+            },
+            {
               urlPattern: ({ request }) =>
                 request.destination === 'document' ||
                 request.destination === 'script' ||
                 request.destination === 'style' ||
-                request.destination === 'image',
+                request.destination === 'image' ||
+                request.destination === 'font',
               handler: 'StaleWhileRevalidate',
               options: {
                 cacheName: 'app-runtime-cache',
