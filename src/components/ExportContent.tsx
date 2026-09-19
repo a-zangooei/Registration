@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Course, DayOfWeek, TimeSlot } from '../types';
 import { getActiveSlotsForCourse } from '../utils/conflictDetector';
 import { getShortCourseName } from '../utils/formatters';
+import { generateICSContent, downloadICSFile } from '../utils/icsExport';
 import {
   Download,
   Printer,
@@ -12,7 +13,10 @@ import {
   Calendar,
   Clock,
   BookOpen,
-  ArrowRight
+  ArrowRight,
+  Bell,
+  CalendarDays,
+  Info,
 } from 'lucide-react';
 
 interface ExportContentProps {
@@ -45,6 +49,44 @@ export const ExportContent: React.FC<ExportContentProps> = ({
 }) => {
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
   const [isRenderingImage, setIsRenderingImage] = useState(false);
+  const [isExportingICS, setIsExportingICS] = useState(false);
+
+  // iCalendar export options
+  const [icsClasses, setIcsClasses] = useState(true);
+  const [icsExams, setIcsExams] = useState(true);
+  const [icsAlarm, setIcsAlarm] = useState(true);
+  const [icsAlarmMinutes, setIcsAlarmMinutes] = useState(60);
+
+  // Action: Export iCalendar (.ics)
+  const handleExportICS = () => {
+    try {
+      setIsExportingICS(true);
+      const icsContent = generateICSContent(
+        selectedCourses,
+        gender,
+        selectedPracticalGroups,
+        {
+          includeWeeklyClasses: icsClasses,
+          includeMidtermExams: icsExams,
+          includeFinalExams: icsExams,
+          addAlarm: icsAlarm,
+          alarmMinutesBefore: icsAlarmMinutes,
+        }
+      );
+
+      downloadICSFile(
+        `medical-schedule-${Date.now()}.ics`,
+        icsContent
+      );
+
+      setDownloadSuccess('ICS');
+      setTimeout(() => setDownloadSuccess(null), 3500);
+    } catch (err) {
+      console.error('Failed to export ICS:', err);
+    } finally {
+      setIsExportingICS(false);
+    }
+  };
 
   const totalUnits = Number(
     selectedCourses.reduce((sum, c) => sum + c.units.total, 0).toFixed(2)
@@ -503,8 +545,90 @@ export const ExportContent: React.FC<ExportContentProps> = ({
       </div>
 
       {/* Format Options Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        {/* Option 1: PDF / Print */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Option 1: iCalendar (.ics) for Google Calendar & Apple/Outlook */}
+        <div className="p-4 rounded-2xl border-2 border-emerald-300 bg-emerald-50/40 hover:bg-emerald-50/70 text-right transition-all flex flex-col justify-between shadow-2xs">
+          <div>
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center mb-3 shadow-xs">
+              <CalendarDays className="w-5 h-5" />
+            </div>
+            <div className="flex items-center justify-between mb-1">
+              <h4 className="text-xs font-black text-slate-900">
+                تقویم شخصی (.ics)
+              </h4>
+              <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-200 text-emerald-900">
+                Samsung / Google / Apple
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-600 leading-snug">
+              خروجی استاندارد سازگار با تقویم سامسونگ، گوگل و آیفون با ثبت جلسات هفتگی و امتحانات.
+            </p>
+
+            {/* Quick ICS Settings */}
+            <div className="mt-3 pt-2.5 border-t border-emerald-200/60 space-y-1.5 text-[10.5px]">
+              <label className="flex items-center gap-2 cursor-pointer select-none text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={icsClasses}
+                  onChange={(e) => setIcsClasses(e.target.checked)}
+                  className="rounded text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5"
+                />
+                <span>جلسات هفتگی کلاس‌ها</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer select-none text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={icsExams}
+                  onChange={(e) => setIcsExams(e.target.checked)}
+                  className="rounded text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5"
+                />
+                <span>آزمون‌های میان‌ترم و پایان‌ترم</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer select-none text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={icsAlarm}
+                  onChange={(e) => setIcsAlarm(e.target.checked)}
+                  className="rounded text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5"
+                />
+                <span className="flex items-center gap-1">
+                  <Bell className="w-3 h-3 text-amber-600" />
+                  <span>تنظیم زنگ یادآور (آلارم)</span>
+                </span>
+              </label>
+
+              {/* Alarm detail note */}
+              {icsAlarm && (
+                <div className="p-2 rounded-lg bg-emerald-100/70 text-[9.5px] text-emerald-950 leading-relaxed space-y-0.5 border border-emerald-200/60">
+                  <p>🔔 <strong>کلاس‌ها:</strong> اعلان ۳۰ دقیقه قبل از هر جلسه.</p>
+                  <p>📅 <strong>امتحانات:</strong> هشدار ۱ الی ۲ روز قبل + آلارم فوری ۲ الی ۳ ساعت قبل از جلسه آزمون.</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleExportICS}
+            disabled={isExportingICS || (!icsClasses && !icsExams)}
+            className="mt-4 w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 active:scale-[0.98]"
+          >
+            {isExportingICS ? (
+              <span>در حال ساخت تقویم...</span>
+            ) : downloadSuccess === 'ICS' ? (
+              <span className="flex items-center gap-1">
+                <Check className="w-3.5 h-3.5" /> فایل .ics دانلود شد
+              </span>
+            ) : (
+              <>
+                <Calendar className="w-3.5 h-3.5" />
+                <span>دانلود تقویم (.ics)</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Option 2: PDF / Print */}
         <button
           type="button"
           onClick={handlePrint}
@@ -518,7 +642,7 @@ export const ExportContent: React.FC<ExportContentProps> = ({
               خروجی PDF / پرینت
             </h4>
             <p className="text-[11px] text-slate-500 leading-snug">
-              استفاده از CSS اختصاصی چاپ A4 افقی، حذف کلیدها و کنترل‌ها.
+              استفاده از فرمت رسمی چاپ A4 افقی، ایزوله از منوها، دکمه‌ها و عناصر جانبی.
             </p>
           </div>
           <span className="mt-4 text-[11px] font-bold text-teal-700 flex items-center gap-1">
@@ -527,7 +651,7 @@ export const ExportContent: React.FC<ExportContentProps> = ({
           </span>
         </button>
 
-        {/* Option 2: Standalone HTML */}
+        {/* Option 3: Standalone HTML */}
         <button
           type="button"
           onClick={handleExportHtml}
@@ -558,7 +682,7 @@ export const ExportContent: React.FC<ExportContentProps> = ({
           </span>
         </button>
 
-        {/* Option 3: PNG Image */}
+        {/* Option 4: PNG Image */}
         <button
           type="button"
           onClick={handleExportPng}

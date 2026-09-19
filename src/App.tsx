@@ -14,6 +14,7 @@ import { ExamTimeline } from './components/ExamTimeline';
 import { ConflictSummary } from './components/ConflictSummary';
 import { SchemaAndAlgorithmModal } from './components/SchemaAndAlgorithmModal';
 import { ExportModal } from './components/ExportModal';
+import { CalendarExportModal } from './components/CalendarExportModal';
 import { PrintableReport } from './components/PrintableReport';
 import { ShareModal } from './components/ShareModal';
 import { ExportContent } from './components/ExportContent';
@@ -73,6 +74,7 @@ export default function App() {
   // Modals
   const [isSchemaModalOpen, setIsSchemaModalOpen] = useState<boolean>(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false);
+  const [isCalendarModalOpen, setIsCalendarModalOpen] = useState<boolean>(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
   const [isOfflineModalOpen, setIsOfflineModalOpen] = useState<boolean>(false);
 
@@ -173,6 +175,7 @@ export default function App() {
         onReset={handleReset}
         onOpenSchemaModal={() => setIsSchemaModalOpen(true)}
         onOpenExportModal={() => setIsExportModalOpen(true)}
+        onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenShareModal={() => setIsShareModalOpen(true)}
         onOpenOfflineModal={() => setIsOfflineModalOpen(true)}
       />
@@ -244,7 +247,7 @@ export default function App() {
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-teal-800 shadow-2xs transition-colors"
               >
                 <Download className="w-3.5 h-3.5 text-teal-600" />
-                <span>خروجی PDF / HTML / تصویر</span>
+                <span>خروجی تقویم .ics / PDF / تصویر</span>
               </button>
               <div className="text-xs text-slate-500 font-medium">
                 💡 هاور روی هر درس: نمایش بلادرنگ تداخلات با رنگ قرمز
@@ -414,7 +417,7 @@ export default function App() {
         maxUnits={maxUnits}
       />
 
-      {/* Comprehensive Export Modal (PDF, HTML, PNG) */}
+      {/* Comprehensive Export Modal (PDF, HTML, PNG, Calendar) */}
       <ExportModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
@@ -424,6 +427,15 @@ export default function App() {
         minUnits={minUnits}
         maxUnits={maxUnits}
         onOpenShareModal={() => setIsShareModalOpen(true)}
+      />
+
+      {/* Dedicated Calendar Export Modal (Samsung Calendar, Google, Apple) */}
+      <CalendarExportModal
+        isOpen={isCalendarModalOpen}
+        onClose={() => setIsCalendarModalOpen(false)}
+        selectedCourses={selectedCourses}
+        gender={gender}
+        selectedPracticalGroups={selectedPracticalGroups}
       />
 
       {/* Shareable Link Modal */}

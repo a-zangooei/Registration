@@ -43,7 +43,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
       }}
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn no-print overflow-y-auto"
     >
-      <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90dvh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden my-auto">
+      <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90dvh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden my-auto">
         {/* Header */}
         <div className="px-5 sm:px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
           <div className="flex items-center gap-2.5">
@@ -52,10 +52,10 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-bold text-slate-900">
-                خروجی و چاپ انتخاب واحد
+                خروجی تقویم، چاپ و ذخیره انتخاب واحد
               </h3>
               <p className="text-[11px] text-slate-500 hidden sm:block">
-                ذخیره PDF، فایل HTML آفلاین، تصویر باکیفیت و لینک اشتراک
+                تقویم گوگل/آیفون (.ics)، ذخیره PDF، فایل HTML آفلاین، عکس PNG و لینک
               </p>
             </div>
           </div>

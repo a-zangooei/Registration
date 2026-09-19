@@ -12,6 +12,7 @@ import {
   Check,
   ChevronLeft,
   DownloadCloud,
+  Calendar,
 } from 'lucide-react';
 import { useOfflineManager } from '../hooks/useOfflineManager';
 
@@ -24,6 +25,7 @@ interface NavbarProps {
   onReset: () => void;
   onOpenSchemaModal: () => void;
   onOpenExportModal: () => void;
+  onOpenCalendarModal: () => void;
   onOpenShareModal: () => void;
   onOpenOfflineModal: () => void;
 }
@@ -37,6 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onReset,
   onOpenSchemaModal,
   onOpenExportModal,
+  onOpenCalendarModal,
   onOpenShareModal,
   onOpenOfflineModal,
 }) => {
@@ -184,16 +187,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>اشتراک لینک</span>
             </button>
 
-            {/* Export Button */}
+            {/* Calendar Export Button - Directly triggers Calendar Modal */}
             <button
-              id="btn-export-trigger-desktop"
+              id="btn-calendar-trigger-desktop"
               type="button"
-              onClick={onOpenExportModal}
+              onClick={onOpenCalendarModal}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-teal-600 hover:bg-teal-700 text-white shadow-xs transition-colors"
-              title="خروجی یکپارچه (PDF/پرینت، HTML، عکس)"
+              title="انتقال به تقویم شخصی (Samsung Calendar، Google Calendar و تقویم آیفون)"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>خروجی و چاپ</span>
+              <Calendar className="w-3.5 h-3.5" />
+              <span>تقویم</span>
             </button>
 
             {/* PWA & Transparent Offline Download Status Button */}
@@ -377,6 +380,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <ChevronLeft className="w-4 h-4 text-indigo-500" />
               </button>
 
+              {/* Calendar Trigger */}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onOpenCalendarModal();
+                }}
+                className="w-full flex items-center justify-between p-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-950 border border-teal-200 text-xs font-bold transition-colors text-right"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center shrink-0">
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span>انتقال به تقویم شخصی</span>
+                    <p className="text-[10px] text-teal-700 font-normal">تقویم سامسونگ، گوگل و آیفون با آلارم</p>
+                  </div>
+                </div>
+                <ChevronLeft className="w-4 h-4 text-teal-600" />
+              </button>
+
               {/* Export Trigger */}
               <button
                 type="button"
@@ -391,8 +415,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <Download className="w-4 h-4" />
                   </div>
                   <div>
-                    <span>خروجی جامع (PDF / تصویر / HTML)</span>
-                    <p className="text-[10px] text-slate-500 font-normal">دانلود و چاپ آفلاین برنامه</p>
+                    <span>خروجی جامع (PDF / تقویم / عکس)</span>
+                    <p className="text-[10px] text-slate-500 font-normal">خروجی فایل‌ها و چاپ مستقیم A4</p>
                   </div>
                 </div>
                 <ChevronLeft className="w-4 h-4 text-slate-400" />

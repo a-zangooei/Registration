@@ -48,14 +48,45 @@ body {
     margin: 10mm;
   }
 
+  /* Hide everything on the page by default in print */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Completely eliminate non-printable UI from the flow */
+  header,
+  nav,
+  main,
+  footer,
+  aside,
+  .no-print,
+  [role="dialog"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Show only the unified printable report and its children */
+  #unified-printable-report,
+  #unified-printable-report * {
+    visibility: visible !important;
+  }
+
+  #unified-printable-report {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
   body {
     background: #ffffff !important;
     color: #000000 !important;
     font-size: 11pt;
-  }
-
-  .no-print {
-    display: none !important;
   }
 
   .print-only {
