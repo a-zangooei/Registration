@@ -17,6 +17,7 @@ import { SchemaAndAlgorithmModal } from './components/SchemaAndAlgorithmModal';
 import { ExportModal } from './components/ExportModal';
 import { PrintableReport } from './components/PrintableReport';
 import { ShareModal } from './components/ShareModal';
+import { ExportContent } from './components/ExportContent';
 import { BottomNav, ActiveMobileTab } from './components/BottomNav';
 import { decodeScheduleFromParams, syncScheduleToUrl } from './utils/urlSharing';
 import { Calendar, Clock, BookOpen, Download, AlertOctagon, Sparkles } from 'lucide-react';
@@ -143,15 +144,11 @@ export default function App() {
   };
 
   const handleMobileTabChange = (tab: ActiveMobileTab) => {
-    if (tab === 'export') {
-      setIsExportModalOpen(true);
-    } else {
-      setMobileTab(tab);
-    }
+    setMobileTab(tab);
   };
 
   return (
-    <div className="min-h-screen bg-slate-100/70 text-slate-900 pb-20 lg:pb-12">
+    <div className="min-h-screen bg-slate-100/70 text-slate-900 pb-28 sm:pb-24 lg:pb-12">
       
       {/* Top Navigation */}
       <Navbar
@@ -346,6 +343,39 @@ export default function App() {
               <ExamTimeline
                 selectedCourses={selectedCourses}
                 allCourses={COURSES_DATA}
+              />
+            </div>
+          )}
+
+          {mobileTab === 'export' && (
+            <div className="bg-white rounded-3xl border border-slate-200 p-4 sm:p-6 shadow-xs animate-fadeIn">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center shadow-xs">
+                    <Download className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-black text-slate-900">
+                      خروجی و چاپ انتخاب واحد
+                    </h2>
+                    <p className="text-[10px] text-slate-500">
+                      ذخیره آفلاین بدون سرور در قالب‌های مختلف
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[11px] font-bold text-teal-800 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-full">
+                  {selectedCourseIds.length} درس انتخابی
+                </span>
+              </div>
+
+              <ExportContent
+                selectedCourses={selectedCourses}
+                gender={gender}
+                selectedPracticalGroups={selectedPracticalGroups}
+                minUnits={minUnits}
+                maxUnits={maxUnits}
+                onOpenShareModal={() => setIsShareModalOpen(true)}
+                onReturnToSchedule={() => setMobileTab('schedule')}
               />
             </div>
           )}

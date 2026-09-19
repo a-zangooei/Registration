@@ -122,8 +122,19 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
         </div>
       </div>
 
+      {/* Mobile horizontal scroll hint */}
+      <div className="md:hidden flex items-center justify-between px-3 py-1.5 bg-teal-50/70 border-b border-teal-100 text-[11px] text-teal-800">
+        <span className="flex items-center gap-1.5">
+          <span>👈</span>
+          <span>برای دیدن تمام روزها، جدول را به چپ بکشید</span>
+        </span>
+        <span className="font-mono text-[10px] bg-white border border-teal-200 px-1.5 py-0.5 rounded-full font-bold">
+          شنبه تا چهارشنبه
+        </span>
+      </div>
+
       {/* Grid container */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto touch-pan-x">
         <div className="min-w-[760px]">
           
           {/* Days Header */}

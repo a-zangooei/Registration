@@ -21,6 +21,16 @@ export const ShareModal: React.FC<ShareModalProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
+  // ESC key to close modal
+  React.useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const shareUrl = buildShareableUrl({
@@ -63,11 +73,16 @@ export const ShareModal: React.FC<ShareModalProps> = ({
   )}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn no-print">
-      <div className="bg-white rounded-3xl max-w-lg w-full flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn no-print overflow-y-auto"
+    >
+      <div className="bg-white rounded-3xl max-w-lg w-full max-h-[90dvh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden my-auto">
         
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-teal-50/70">
+        <div className="px-5 sm:px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-teal-50/70 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center shadow-xs">
               <Share2 className="w-4 h-4" />
@@ -82,6 +97,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
           >
@@ -90,7 +106,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4 overflow-y-auto">
           
           {/* Summary pill */}
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 flex items-center justify-between text-xs text-slate-700">
