@@ -1,0 +1,7 @@
+{
+  "name": "سامانه هوشمند انتخاب واحد پزشکی",
+  "description": "سامانه تعاملی و آفلاین انتخاب واحد علوم پایه پزشکی با ماژول خروجی جامع (PDF، HTML، PNG)، مدیریت بازه‌های شناور عملی، تقویم هفتگی و گاهشمار امتحانات",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
