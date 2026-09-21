@@ -311,3 +311,41 @@ export function getHoverConflicts(
 
   return { conflictingCourseIds, reasons };
 }
+
+/**
+ * Calculates instant conflict status for ALL unselected courses against currently selected courses.
+ * This eliminates the need for long-press or hovering on mobile devices.
+ */
+export function getInstantUnselectedConflicts(
+  selections: StudentSelections
+): Record<string, ConflictReason[]> {
+  const map: Record<string, ConflictReason[]> = {};
+
+  for (const course of COURSES_DATA) {
+    // If already selected, it is handled by evaluateAllConflicts
+    if (selections.selectedCourseIds.includes(course.id)) {
+      continue;
+    }
+
+    const reasons: ConflictReason[] = [];
+
+    // 1. Prerequisite / Corequisite violations
+    const reqConflicts = checkCoursePrerequisites(course, selections.selectedCourseIds);
+    reasons.push(...reqConflicts);
+
+    // 2. Check pairwise against each currently selected course
+    for (const selectedId of selections.selectedCourseIds) {
+      const selectedCourse = COURSES_DATA.find((c) => c.id === selectedId);
+      if (!selectedCourse) continue;
+
+      const pairwise = checkTwoCoursesConflict(course, selectedCourse, selections);
+      if (pairwise.length > 0) {
+        reasons.push(...pairwise);
+      }
+    }
+
+    map[course.id] = reasons;
+  }
+
+  return map;
+}

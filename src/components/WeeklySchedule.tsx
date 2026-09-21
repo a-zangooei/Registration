@@ -134,7 +134,7 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
       </div>
 
       {/* Grid container */}
-      <div className="overflow-x-auto touch-pan-x">
+      <div className="overflow-x-auto touch-auto overscroll-x-contain">
         <div className="min-w-[760px]">
           
           {/* Days Header */}

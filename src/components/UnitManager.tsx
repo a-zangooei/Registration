@@ -120,7 +120,7 @@ export const UnitManager: React.FC<UnitManagerProps> = ({
               )}
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              تعداد دروس انتخاب شده: {selectedCourses.length} درس از ۱۹ درس
+              تعداد دروس انتخاب شده: {selectedCourses.length} درس از {allCourses.length} درس
             </p>
           </div>
         </div>

@@ -21,6 +21,7 @@ interface CourseListProps {
   hoveredCourseId: string | null;
   conflictingCourseIds: Set<string>;
   hoverConflictReasons: ConflictReason[];
+  instantUnselectedConflicts?: Record<string, ConflictReason[]>;
   gender: 'male' | 'female';
   onToggleCourse: (courseId: string) => void;
   onSelectPracticalGroup: (courseId: string, groupId: string) => void;
@@ -35,6 +36,7 @@ export const CourseList: React.FC<CourseListProps> = ({
   hoveredCourseId,
   conflictingCourseIds,
   hoverConflictReasons,
+  instantUnselectedConflicts = {},
   gender,
   onToggleCourse,
   onSelectPracticalGroup,
@@ -43,6 +45,24 @@ export const CourseList: React.FC<CourseListProps> = ({
   const [selectedTermTab, setSelectedTermTab] = React.useState<number | 'all'>('all');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [categoryFilter, setCategoryFilter] = React.useState<'all' | 'specialized' | 'general'>('all');
+
+  // Dynamically compute term counts without hardcoding
+  const termCounts = React.useMemo(() => {
+    const counts: Record<number, number> = {};
+    for (const c of courses) {
+      counts[c.term] = (counts[c.term] || 0) + 1;
+    }
+    return counts;
+  }, [courses]);
+
+  // Unique sorted terms from the dataset
+  const availableTerms = React.useMemo(() => {
+    const termSet = new Set<number>();
+    for (const c of courses) {
+      termSet.add(c.term);
+    }
+    return Array.from(termSet).sort((a, b) => a - b);
+  }, [courses]);
 
   // Filter courses based on user input
   const filteredCourses = courses.filter((c) => {
@@ -75,41 +95,22 @@ export const CourseList: React.FC<CourseListProps> = ({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            همه دروس (۱۹)
+            همه دروس ({courses.length})
           </button>
-          <button
-            type="button"
-            onClick={() => setSelectedTermTab(3)}
-            className={`px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
-              selectedTermTab === 3
-                ? 'bg-white text-teal-700 shadow-xs font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            ترم ۳ (۳ درس)
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedTermTab(4)}
-            className={`px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
-              selectedTermTab === 4
-                ? 'bg-white text-teal-700 shadow-xs font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            ترم ۴ (۵ درس)
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedTermTab(5)}
-            className={`px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
-              selectedTermTab === 5
-                ? 'bg-white text-teal-700 shadow-xs font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            ترم ۵ (۱۱ درس)
-          </button>
+          {availableTerms.map((term) => (
+            <button
+              key={term}
+              type="button"
+              onClick={() => setSelectedTermTab(term)}
+              className={`px-3 py-1.5 rounded-lg transition-all whitespace-nowrap ${
+                selectedTermTab === term
+                  ? 'bg-white text-teal-700 shadow-xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              ترم {term} ({termCounts[term] || 0} درس)
+            </button>
+          ))}
         </div>
 
         {/* Search & Category Filter */}
@@ -145,6 +146,10 @@ export const CourseList: React.FC<CourseListProps> = ({
           const activeConflicts = conflictMap[course.id] || [];
           const hasOwnConflict = isSelected && activeConflicts.length > 0;
           
+          // Instant potential conflicts when course is unselected
+          const unselectedConflicts = !isSelected ? (instantUnselectedConflicts[course.id] || []) : [];
+          const hasInstantConflict = !isSelected && unselectedConflicts.length > 0;
+
           // Hover state: Is this course conflicting with the hovered course?
           const isHoverConflicted = conflictingCourseIds.has(course.id);
           const isCurrentHoverTarget = hoveredCourseId === course.id;
@@ -153,14 +158,14 @@ export const CourseList: React.FC<CourseListProps> = ({
           const displayConflicts = isSelected
             ? activeConflicts
             : isCurrentHoverTarget
-            ? hoverConflictReasons
+            ? (hoverConflictReasons.length > 0 ? hoverConflictReasons : unselectedConflicts)
             : isHoverConflicted
             ? hoverConflictReasons.filter(
                 (r) => r.conflictingWithCourseId === course.id
               )
-            : [];
+            : unselectedConflicts;
 
-          const showRedAlert = hasOwnConflict || isHoverConflicted || (isCurrentHoverTarget && hoverConflictReasons.length > 0);
+          const showRedAlert = hasOwnConflict || hasInstantConflict || isHoverConflicted || (isCurrentHoverTarget && hoverConflictReasons.length > 0);
 
           return (
             <div
@@ -168,13 +173,21 @@ export const CourseList: React.FC<CourseListProps> = ({
               id={`course-card-${course.id}`}
               onMouseEnter={() => onHoverCourse(course.id)}
               onMouseLeave={() => onHoverCourse(null)}
-              className={`rounded-2xl p-4 border transition-all duration-200 relative group flex flex-col justify-between ${
+              onClick={() => {
+                // On mobile devices, tapping the card toggles hover preview state if not clicking actions
+                if (hoveredCourseId === course.id) {
+                  onHoverCourse(null);
+                } else {
+                  onHoverCourse(course.id);
+                }
+              }}
+              className={`rounded-2xl p-4 border transition-all duration-200 relative group flex flex-col justify-between cursor-pointer sm:cursor-default ${
                 showRedAlert
                   ? 'bg-rose-50/70 border-rose-400 ring-2 ring-rose-400/30 shadow-xs'
                   : isSelected
                   ? 'bg-white border-teal-500 ring-2 ring-teal-500/20 shadow-xs'
                   : isCurrentHoverTarget
-                  ? 'bg-slate-50 border-slate-300 shadow-xs'
+                  ? 'bg-slate-50 border-slate-300 shadow-xs ring-2 ring-teal-500/30'
                   : 'bg-white border-slate-200 hover:border-slate-300'
               }`}
             >

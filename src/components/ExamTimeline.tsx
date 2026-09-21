@@ -116,7 +116,7 @@ export const ExamTimeline: React.FC<ExamTimelineProps> = ({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            همه آزمون‌های ۱۹ درس
+            همه آزمون‌ها ({allCourses.length} درس)
           </button>
         </div>
       </div>

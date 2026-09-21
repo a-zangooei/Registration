@@ -102,6 +102,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             )}
 
+            {/* Mobile Quick Calendar Trigger */}
+            <button
+              id="btn-calendar-trigger-mobile"
+              type="button"
+              onClick={onOpenCalendarModal}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-teal-600 text-white font-bold text-xs shadow-2xs hover:bg-teal-700 transition-colors"
+              title="انتقال به تقویم با آلارم"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span className="text-[10px]">تقویم</span>
+            </button>
+
             {/* Mobile Offline Status Trigger */}
             <button
               id="btn-offline-status-mobile"

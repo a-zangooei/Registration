@@ -5,7 +5,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Course, StudentSelections } from './types';
-import { evaluateAllConflicts, getHoverConflicts } from './utils/conflictDetector';
+import { evaluateAllConflicts, getHoverConflicts, getInstantUnselectedConflicts } from './utils/conflictDetector';
 import { Navbar } from './components/Navbar';
 import { UnitManager } from './components/UnitManager';
 import { WeeklySchedule } from './components/WeeklySchedule';
@@ -138,6 +138,11 @@ export default function App() {
     }
     return getHoverConflicts(hoveredCourseId, selections);
   }, [hoveredCourseId, selections]);
+
+  // Instant conflicts for all unselected courses against selected courses (immediate on mobile and desktop)
+  const instantUnselectedConflicts = useMemo(() => {
+    return getInstantUnselectedConflicts(selections);
+  }, [selections]);
 
   // Handlers
   const handleToggleCourse = (courseId: string) => {
@@ -295,6 +300,7 @@ export default function App() {
               hoveredCourseId={hoveredCourseId}
               conflictingCourseIds={conflictingCourseIds}
               hoverConflictReasons={hoverConflictReasons}
+              instantUnselectedConflicts={instantUnselectedConflicts}
               gender={gender}
               onToggleCourse={handleToggleCourse}
               onSelectPracticalGroup={handleSelectPracticalGroup}
@@ -332,6 +338,7 @@ export default function App() {
                 hoveredCourseId={hoveredCourseId}
                 conflictingCourseIds={conflictingCourseIds}
                 hoverConflictReasons={hoverConflictReasons}
+                instantUnselectedConflicts={instantUnselectedConflicts}
                 gender={gender}
                 onToggleCourse={handleToggleCourse}
                 onSelectPracticalGroup={handleSelectPracticalGroup}
