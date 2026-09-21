@@ -21,7 +21,15 @@ import { ExportContent } from './components/ExportContent';
 import { BottomNav, ActiveMobileTab } from './components/BottomNav';
 import { OfflineManagerModal } from './components/OfflineManagerModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { SemesterScheduleModal } from './components/SemesterScheduleModal';
 import { decodeScheduleFromParams, syncScheduleToUrl } from './utils/urlSharing';
+import {
+  getSavedSemesterSchedule,
+  saveSemesterSchedule,
+  clearSavedSemesterSchedule,
+  isScheduleMatching,
+  SavedSemesterSchedule,
+} from './utils/semesterStorage';
 import { Calendar, Clock, BookOpen, Download, AlertOctagon } from 'lucide-react';
 import { CurriculumDataset } from './types';
 import { DEFAULT_CURRICULUM } from './data/courses';
@@ -33,8 +41,37 @@ export default function App() {
   const [curriculum, setCurriculum] = useState<CurriculumDataset>(DEFAULT_CURRICULUM);
   const coursesData = curriculum.courses;
 
-  // Initialize state from URL query parameters or fallback to offline local storage
+  // Check if opened via Android App Shortcut or URL parameter
+  const shortcutScheduleRequested = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return (
+      window.location.search.includes('shortcut=schedule') ||
+      window.location.search.includes('tab=schedule')
+    );
+  }, []);
+
+  const shortcutCoursesRequested = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.location.search.includes('shortcut=courses');
+  }, []);
+
+  // Saved semester schedule state (for the Android Shortcut)
+  const [savedSemesterSchedule, setSavedSemesterSchedule] = useState<SavedSemesterSchedule | null>(() => {
+    return getSavedSemesterSchedule();
+  });
+
+  const [isOpenedFromShortcut, setIsOpenedFromShortcut] = useState<boolean>(shortcutScheduleRequested);
+
+  // Initialize state from URL query parameters, or from saved semester schedule if shortcut was triggered, or fallback to offline local storage
   const savedState = useMemo(() => {
+    // If opened from Android 'برنامه هفتگی' shortcut and a saved semester schedule exists, load it immediately!
+    if (shortcutScheduleRequested) {
+      const storedSemester = getSavedSemesterSchedule();
+      if (storedSemester && storedSemester.courseIds.length > 0) {
+        return storedSemester;
+      }
+    }
+
     if (typeof window !== 'undefined' && window.location.search) {
       const fromUrl = decodeScheduleFromParams(window.location.search);
       if (fromUrl) return fromUrl;
@@ -50,7 +87,7 @@ export default function App() {
       }
     }
     return null;
-  }, []);
+  }, [shortcutScheduleRequested]);
 
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>(
     savedState?.courseIds || []
@@ -68,8 +105,11 @@ export default function App() {
   // Desktop tab: schedule vs exams
   const [desktopView, setDesktopView] = useState<'schedule' | 'exams'>('schedule');
 
-  // Mobile navigation tab
-  const [mobileTab, setMobileTab] = useState<ActiveMobileTab>('courses');
+  // Mobile navigation tab: default to 'schedule' if shortcut=schedule was tapped
+  const [mobileTab, setMobileTab] = useState<ActiveMobileTab>(() => {
+    if (shortcutScheduleRequested) return 'schedule';
+    return 'courses';
+  });
 
   // Modals
   const [isSchemaModalOpen, setIsSchemaModalOpen] = useState<boolean>(false);
@@ -77,6 +117,7 @@ export default function App() {
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState<boolean>(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
   const [isOfflineModalOpen, setIsOfflineModalOpen] = useState<boolean>(false);
+  const [isSemesterModalOpen, setIsSemesterModalOpen] = useState<boolean>(false);
 
   // Synchronize browser URL query parameters and local offline persistence
   React.useEffect(() => {
@@ -144,6 +185,11 @@ export default function App() {
     return getInstantUnselectedConflicts(selections);
   }, [selections]);
 
+  // Check whether current selections match the saved semester schedule
+  const isCurrentMatchingSaved = useMemo(() => {
+    return isScheduleMatching(selectedCourseIds, selectedPracticalGroups, gender, savedSemesterSchedule);
+  }, [selectedCourseIds, selectedPracticalGroups, gender, savedSemesterSchedule]);
+
   // Handlers
   const handleToggleCourse = (courseId: string) => {
     setSelectedCourseIds((prev) =>
@@ -167,6 +213,28 @@ export default function App() {
     setMobileTab(tab);
   };
 
+  const handleSaveCurrentAsSemester = () => {
+    const totalUnits = Number(selectedCourses.reduce((sum, c) => sum + c.units.total, 0).toFixed(2));
+    const saved = saveSemesterSchedule(selectedCourseIds, selectedPracticalGroups, gender, totalUnits);
+    setSavedSemesterSchedule(saved);
+  };
+
+  const handleLoadSavedSemester = () => {
+    if (!savedSemesterSchedule) return;
+    setSelectedCourseIds(savedSemesterSchedule.courseIds);
+    setSelectedPracticalGroups(savedSemesterSchedule.practicalGroups);
+    setGender(savedSemesterSchedule.gender);
+    setMobileTab('schedule');
+    setDesktopView('schedule');
+    setIsOpenedFromShortcut(true);
+  };
+
+  const handleClearSavedSemester = () => {
+    clearSavedSemesterSchedule();
+    setSavedSemesterSchedule(null);
+    setIsOpenedFromShortcut(false);
+  };
+
   return (
     <div className="min-h-screen bg-slate-100/70 text-slate-900 pb-28 sm:pb-24 lg:pb-12">
       
@@ -183,6 +251,8 @@ export default function App() {
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenShareModal={() => setIsShareModalOpen(true)}
         onOpenOfflineModal={() => setIsOfflineModalOpen(true)}
+        onOpenSemesterModal={() => setIsSemesterModalOpen(true)}
+        hasSavedSemesterSchedule={!!savedSemesterSchedule}
       />
 
       {/* Main Container */}
@@ -270,6 +340,11 @@ export default function App() {
               conflictingCourseIds={conflictingCourseIds}
               onCourseHover={setHoveredCourseId}
               onOpenShareModal={() => setIsShareModalOpen(true)}
+              onOpenSemesterModal={() => setIsSemesterModalOpen(true)}
+              hasSavedSemesterSchedule={!!savedSemesterSchedule}
+              isCurrentMatchingSaved={isCurrentMatchingSaved}
+              isOpenedFromShortcut={isOpenedFromShortcut}
+              savedScheduleDate={savedSemesterSchedule?.savedAt}
             />
           ) : (
             <ExamTimeline
@@ -357,6 +432,11 @@ export default function App() {
                 conflictingCourseIds={conflictingCourseIds}
                 onCourseHover={setHoveredCourseId}
                 onOpenShareModal={() => setIsShareModalOpen(true)}
+                onOpenSemesterModal={() => setIsSemesterModalOpen(true)}
+                hasSavedSemesterSchedule={!!savedSemesterSchedule}
+                isCurrentMatchingSaved={isCurrentMatchingSaved}
+                isOpenedFromShortcut={isOpenedFromShortcut}
+                savedScheduleDate={savedSemesterSchedule?.savedAt}
               />
             </div>
           )}
@@ -464,6 +544,20 @@ export default function App() {
       <OfflineManagerModal
         isOpen={isOfflineModalOpen}
         onClose={() => setIsOfflineModalOpen(false)}
+      />
+
+      {/* Semester Schedule & Android Shortcut Modal */}
+      <SemesterScheduleModal
+        isOpen={isSemesterModalOpen}
+        onClose={() => setIsSemesterModalOpen(false)}
+        allCourses={coursesData}
+        currentCourseIds={selectedCourseIds}
+        currentPracticalGroups={selectedPracticalGroups}
+        savedSchedule={savedSemesterSchedule}
+        isCurrentMatchingSaved={isCurrentMatchingSaved}
+        onSaveCurrentAsSemester={handleSaveCurrentAsSemester}
+        onLoadSavedSemester={handleLoadSavedSemester}
+        onClearSavedSemester={handleClearSavedSemester}
       />
 
       {/* Persistent Offline Status Floating Indicator */}

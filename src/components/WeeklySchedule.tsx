@@ -2,7 +2,7 @@ import React from 'react';
 import { Course, DayOfWeek, TimeSlot } from '../types';
 import { getActiveSlotsForCourse, doSlotsOverlap } from '../utils/conflictDetector';
 import { getShortCourseName } from '../utils/formatters';
-import { AlertCircle, Clock, MapPin, User, Share2 } from 'lucide-react';
+import { AlertCircle, Clock, MapPin, User, Share2, BookmarkCheck, Smartphone, CheckCircle2 } from 'lucide-react';
 
 interface WeeklyScheduleProps {
   selectedCourses: Course[];
@@ -13,6 +13,11 @@ interface WeeklyScheduleProps {
   onCourseClick?: (courseId: string) => void;
   onCourseHover?: (courseId: string | null) => void;
   onOpenShareModal?: () => void;
+  onOpenSemesterModal?: () => void;
+  hasSavedSemesterSchedule?: boolean;
+  isCurrentMatchingSaved?: boolean;
+  isOpenedFromShortcut?: boolean;
+  savedScheduleDate?: string | null;
 }
 
 const DAYS: DayOfWeek[] = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه'];
@@ -41,6 +46,11 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   onCourseClick,
   onCourseHover,
   onOpenShareModal,
+  onOpenSemesterModal,
+  hasSavedSemesterSchedule = false,
+  isCurrentMatchingSaved = false,
+  isOpenedFromShortcut = false,
+  savedScheduleDate = null,
 }) => {
   // Collect all active slots for all selected courses
   const allActiveSlots: { course: Course; slot: TimeSlot }[] = [];
@@ -86,6 +96,35 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
   return (
     <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
       
+      {/* Android Shortcut Notification Banner */}
+      {isOpenedFromShortcut && (
+        <div className="px-4 py-2.5 bg-linear-to-r from-teal-700 to-teal-800 text-white flex items-center justify-between gap-2 text-xs border-b border-teal-900 animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-200 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+            </span>
+            <span className="font-black">
+              برنامه هفتگی قطعی ترم (فراخوانی‌شده از میانبر اندروید)
+            </span>
+            {savedScheduleDate && (
+              <span className="text-[11px] text-teal-100/90 hidden sm:inline">
+                ({savedScheduleDate})
+              </span>
+            )}
+          </div>
+          {onOpenSemesterModal && (
+            <button
+              type="button"
+              onClick={onOpenSemesterModal}
+              className="text-[11px] font-bold bg-white/15 hover:bg-white/25 px-2 py-1 rounded-md transition-colors"
+            >
+              مدیریت برنامه
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Header bar of schedule */}
       <div className="px-4 py-3 bg-slate-50/80 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
@@ -94,19 +133,43 @@ export const WeeklySchedule: React.FC<WeeklyScheduleProps> = ({
             برنامه هفتگی کلاسی (شنبه تا چهارشنبه | ۰۸:۰۰ الی ۲۰:۰۰)
           </h2>
         </div>
-        <div className="flex items-center gap-3 text-xs text-slate-500 flex-wrap">
+        <div className="flex items-center gap-2.5 text-xs text-slate-500 flex-wrap">
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-xs bg-teal-500"></span>
             کلاس قطعی
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-xs bg-indigo-100 border border-dashed border-indigo-400"></span>
-            بازه شناور عملی (فاقد تداخل - انتخاب در آینده)
+            بازه شناور عملی
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-xs bg-rose-500"></span>
-            تداخل زمانی قطعی
+            تداخل زمانی
           </span>
+
+          {onOpenSemesterModal && (
+            <button
+              type="button"
+              onClick={onOpenSemesterModal}
+              className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-lg border transition-colors shadow-2xs mr-1 ${
+                hasSavedSemesterSchedule
+                  ? isCurrentMatchingSaved
+                    ? 'text-teal-800 bg-teal-50 border-teal-300 hover:bg-teal-100'
+                    : 'text-amber-800 bg-amber-50 border-amber-300 hover:bg-amber-100'
+                  : 'text-slate-700 bg-white border-slate-300 hover:bg-slate-50'
+              }`}
+              title="مدیریت برنامه قطعی ترم و میانبر اندروید"
+            >
+              <BookmarkCheck className={`w-3.5 h-3.5 ${hasSavedSemesterSchedule ? 'text-teal-600' : 'text-slate-500'}`} />
+              <span>
+                {hasSavedSemesterSchedule
+                  ? isCurrentMatchingSaved
+                    ? 'برنامه ترم ذخیره است ✓'
+                    : 'برنامه ترم (تغییر یافته)'
+                  : 'ذخیره به عنوان برنامه ترم'}
+              </span>
+            </button>
+          )}
 
           {onOpenShareModal && (
             <button

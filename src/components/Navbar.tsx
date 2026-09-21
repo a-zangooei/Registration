@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   DownloadCloud,
   Calendar,
+  BookmarkCheck,
 } from 'lucide-react';
 import { useOfflineManager } from '../hooks/useOfflineManager';
 
@@ -28,6 +29,8 @@ interface NavbarProps {
   onOpenCalendarModal: () => void;
   onOpenShareModal: () => void;
   onOpenOfflineModal: () => void;
+  onOpenSemesterModal?: () => void;
+  hasSavedSemesterSchedule?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -42,6 +45,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCalendarModal,
   onOpenShareModal,
   onOpenOfflineModal,
+  onOpenSemesterModal,
+  hasSavedSemesterSchedule = false,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isFullyCached, isOnline } = useOfflineManager();
@@ -211,6 +216,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>تقویم</span>
             </button>
 
+            {/* Semester Schedule / Android Shortcut Trigger */}
+            {onOpenSemesterModal && (
+              <button
+                id="btn-semester-schedule-desktop"
+                type="button"
+                onClick={onOpenSemesterModal}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl border transition-all ${
+                  hasSavedSemesterSchedule
+                    ? 'bg-teal-50 hover:bg-teal-100 text-teal-800 border-teal-300 shadow-2xs'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                }`}
+                title="مدیریت برنامه قطعی ترم و میانبر اختصاصی اندروید"
+              >
+                <BookmarkCheck className={`w-3.5 h-3.5 ${hasSavedSemesterSchedule ? 'text-teal-600' : 'text-slate-600'}`} />
+                <span>{hasSavedSemesterSchedule ? 'برنامه ترم ✓' : 'برنامه ترم'}</span>
+              </button>
+            )}
+
             {/* PWA & Transparent Offline Download Status Button */}
             <button
               id="btn-offline-status-desktop"
@@ -370,6 +393,38 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
                 <ChevronLeft className="w-4 h-4 text-slate-400" />
               </button>
+
+              {/* Semester Schedule / Android Shortcut in Mobile Menu */}
+              {onOpenSemesterModal && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onOpenSemesterModal();
+                  }}
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-teal-50/80 hover:bg-teal-100 text-teal-950 border border-teal-200 text-xs font-bold transition-colors text-right"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-teal-700 text-white flex items-center justify-center shrink-0">
+                      <BookmarkCheck className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span>برنامه هفتگی ترم (میانبر اندروید)</span>
+                        {hasSavedSemesterSchedule && (
+                          <span className="text-[9px] bg-teal-600 text-white px-1.5 py-0.5 rounded-full font-bold">
+                            ذخیره شده
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-teal-700 font-normal">
+                        دسترسی مستقیم با لمس طولانی روی آیکون برنامه
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronLeft className="w-4 h-4 text-teal-600" />
+                </button>
+              )}
 
               {/* Share Link */}
               <button

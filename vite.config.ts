@@ -56,6 +56,34 @@ export default defineConfig(() => {
               purpose: 'maskable',
             },
           ],
+          shortcuts: [
+            {
+              name: 'برنامه هفتگی ترم',
+              short_name: 'برنامه هفتگی',
+              description: 'مشاهده برنامه هفتگی قطعی و ذخیره‌شده ترم',
+              url: './?shortcut=schedule',
+              icons: [
+                {
+                  src: 'pwa-192x192.png',
+                  sizes: '192x192',
+                  type: 'image/png',
+                },
+              ],
+            },
+            {
+              name: 'فهرست دروس و انتخاب واحد',
+              short_name: 'انتخاب واحد',
+              description: 'مشاهده فهرست دروس و انتخاب واحد',
+              url: './?shortcut=courses',
+              icons: [
+                {
+                  src: 'pwa-192x192.png',
+                  sizes: '192x192',
+                  type: 'image/png',
+                },
+              ],
+            },
+          ],
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff,woff2}'],
