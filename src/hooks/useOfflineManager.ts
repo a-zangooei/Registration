@@ -120,8 +120,8 @@ export function useOfflineManager() {
       for (let i = 0; i < allUrlsToCache.length; i++) {
         const url = allUrlsToCache[i];
         try {
-          // Fetch with no-cache to get latest version from server
-          const response = await fetch(url, { cache: 'no-cache' });
+          // Fetch with reload to bypass HTTP disk cache and obtain latest assets from server
+          const response = await fetch(url, { cache: 'reload' });
           if (response.ok || response.type === 'opaque') {
             await cache.put(url, response.clone());
             loadedCount++;

@@ -14,6 +14,8 @@ import {
   Share2,
   ArrowDownToLine,
   HelpCircle,
+  Sparkles,
+  Trash2,
 } from 'lucide-react';
 import { useOfflineManager } from '../hooks/useOfflineManager';
 import { usePWAInstall } from '../hooks/usePWAInstall';
@@ -21,11 +23,23 @@ import { usePWAInstall } from '../hooks/usePWAInstall';
 interface OfflineManagerModalProps {
   isOpen: boolean;
   onClose: () => void;
+  needRefresh?: boolean;
+  isCheckingUpdate?: boolean;
+  updateCheckResult?: 'latest' | 'updated' | null;
+  onCheckForUpdate?: () => void;
+  onApplyUpdate?: () => void;
+  onForceCleanAndReload?: () => void;
 }
 
 export const OfflineManagerModal: React.FC<OfflineManagerModalProps> = ({
   isOpen,
   onClose,
+  needRefresh = false,
+  isCheckingUpdate = false,
+  updateCheckResult = null,
+  onCheckForUpdate,
+  onApplyUpdate,
+  onForceCleanAndReload,
 }) => {
   const {
     isOnline,
@@ -145,6 +159,77 @@ export const OfflineManagerModal: React.FC<OfflineManagerModalProps> = ({
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+
+          {/* Automatic Update & Server Sync Section */}
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-teal-700" />
+                به‌روزرسانی خودکار و دریافت آخرین تغییرات
+              </span>
+              <span className="text-[10px] text-slate-500 font-medium">
+                سرویس‌ورکر هوشمند PWA
+              </span>
+            </div>
+
+            {needRefresh ? (
+              <div className="p-3 bg-teal-50 border border-teal-300 rounded-xl space-y-2">
+                <div className="flex items-center gap-2 text-teal-900 font-bold text-xs">
+                  <Sparkles className="w-4 h-4 text-teal-600 animate-pulse" />
+                  <span>نسخه جدید سامانه دانلود شده و آماده اعمال است!</span>
+                </div>
+                <p className="text-[11px] text-teal-800 leading-relaxed">
+                  تغییرات جدید و آخرین اصلاحات دروس آماده هستند. برای جایگزینی آنی نسخه جدید، دکمه زیر را لمس کنید:
+                </p>
+                {onApplyUpdate && (
+                  <button
+                    type="button"
+                    onClick={onApplyUpdate}
+                    className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition-colors shadow-xs"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>اعمال نسخه جدید و بارگذاری مجدد</span>
+                  </button>
+                )}
+              </div>
+            ) : updateCheckResult === 'latest' ? (
+              <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 text-xs font-medium">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>برنامه شما کاملاً به‌روز است (آخرین نسخه روی دستگاه شما فعال است).</span>
+              </div>
+            ) : (
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                این وب‌اپلیکیشن به صورت خودکار با هر بار باز شدن یا بازگشت به برنامه، تغییرات و دروس جدید را از سرور دریافت می‌کند و هیچ نیازی به حذف و نصب مجدد برنامه در اندروید نیست.
+              </p>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              {onCheckForUpdate && (
+                <button
+                  type="button"
+                  disabled={isCheckingUpdate || !isOnline}
+                  onClick={onCheckForUpdate}
+                  className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-xs transition-all shadow-2xs disabled:opacity-50"
+                  title="بررسی وجود نسخه جدید در سرور"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 text-teal-600 ${isCheckingUpdate ? 'animate-spin' : ''}`} />
+                  <span>{isCheckingUpdate ? 'در حال بررسی سرور...' : 'بررسی نسخه جدید'}</span>
+                </button>
+              )}
+
+              {onForceCleanAndReload && (
+                <button
+                  type="button"
+                  onClick={onForceCleanAndReload}
+                  className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 border border-slate-300 hover:border-rose-300 font-medium text-xs transition-all shadow-2xs"
+                  title="پاکسازی کامل حافظه موقت و رفرش عمیق جهت رفع هرگونه ناسازگاری"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                  <span>پاکسازی کش و رفرش عمیق</span>
+                </button>
+              )}
             </div>
           </div>
 

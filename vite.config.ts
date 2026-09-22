@@ -88,6 +88,9 @@ export default defineConfig(() => {
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff,woff2}'],
           navigateFallback: 'index.html',
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: true,
           runtimeCaching: [
             {
               // Google Fonts Stylesheets
@@ -120,33 +123,17 @@ export default defineConfig(() => {
               },
             },
             {
-              urlPattern: ({ request }) =>
-                request.destination === 'document' ||
-                request.destination === 'script' ||
-                request.destination === 'style' ||
-                request.destination === 'image' ||
-                request.destination === 'font',
-              handler: 'StaleWhileRevalidate',
-              options: {
-                cacheName: 'app-runtime-cache',
-                expiration: {
-                  maxEntries: 100,
-                  maxAgeSeconds: 60 * 60 * 24 * 365,
-                },
-                cacheableResponse: {
-                  statuses: [0, 200],
-                },
-              },
-            },
-            {
+              // Curriculum datasets - NetworkFirst ensures latest curriculum updates are fetched immediately
+              // while falling back to cache when offline
               urlPattern: ({ url }) =>
                 url.pathname.includes('/datasets/') || url.pathname.endsWith('.json'),
-              handler: 'CacheFirst',
+              handler: 'NetworkFirst',
               options: {
                 cacheName: 'datasets-offline-cache',
+                networkTimeoutSeconds: 3,
                 expiration: {
                   maxEntries: 50,
-                  maxAgeSeconds: 60 * 60 * 24 * 180,
+                  maxAgeSeconds: 60 * 60 * 24 * 90,
                 },
                 cacheableResponse: {
                   statuses: [0, 200],
@@ -156,8 +143,7 @@ export default defineConfig(() => {
           ],
         },
         devOptions: {
-          enabled: true,
-          type: 'module',
+          enabled: false,
         },
       }),
     ],

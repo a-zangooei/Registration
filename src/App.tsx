@@ -22,6 +22,8 @@ import { BottomNav, ActiveMobileTab } from './components/BottomNav';
 import { OfflineManagerModal } from './components/OfflineManagerModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { SemesterScheduleModal } from './components/SemesterScheduleModal';
+import { PWAUpdateNotification } from './components/PWAUpdateNotification';
+import { usePWAUpdate } from './hooks/usePWAUpdate';
 import { decodeScheduleFromParams, syncScheduleToUrl } from './utils/urlSharing';
 import {
   getSavedSemesterSchedule,
@@ -40,6 +42,17 @@ export default function App() {
   // Modular Curriculum dataset
   const [curriculum, setCurriculum] = useState<CurriculumDataset>(DEFAULT_CURRICULUM);
   const coursesData = curriculum.courses;
+
+  // PWA Automatic & Live Background Update Manager
+  const {
+    needRefresh,
+    setNeedRefresh,
+    applyUpdate,
+    checkForUpdate,
+    isCheckingUpdate,
+    updateCheckResult,
+    forceCleanAndReload,
+  } = usePWAUpdate();
 
   // Check if opened via Android App Shortcut or URL parameter
   const shortcutScheduleRequested = useMemo(() => {
@@ -253,6 +266,7 @@ export default function App() {
         onOpenOfflineModal={() => setIsOfflineModalOpen(true)}
         onOpenSemesterModal={() => setIsSemesterModalOpen(true)}
         hasSavedSemesterSchedule={!!savedSemesterSchedule}
+        needRefresh={needRefresh}
       />
 
       {/* Main Container */}
@@ -544,6 +558,19 @@ export default function App() {
       <OfflineManagerModal
         isOpen={isOfflineModalOpen}
         onClose={() => setIsOfflineModalOpen(false)}
+        needRefresh={needRefresh}
+        isCheckingUpdate={isCheckingUpdate}
+        updateCheckResult={updateCheckResult}
+        onCheckForUpdate={checkForUpdate}
+        onApplyUpdate={applyUpdate}
+        onForceCleanAndReload={forceCleanAndReload}
+      />
+
+      {/* Floating In-App PWA Update Notification */}
+      <PWAUpdateNotification
+        needRefresh={needRefresh}
+        onApplyUpdate={applyUpdate}
+        onDismiss={() => setNeedRefresh(false)}
       />
 
       {/* Semester Schedule & Android Shortcut Modal */}
