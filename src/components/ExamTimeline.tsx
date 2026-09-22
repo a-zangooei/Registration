@@ -5,6 +5,7 @@ import { Calendar, AlertCircle, Clock, CheckCircle, FileText, ChevronRight } fro
 interface ExamTimelineProps {
   selectedCourses: Course[];
   allCourses: Course[];
+  onNavigateToCourses?: () => void;
 }
 
 interface ExamEntry {
@@ -23,6 +24,7 @@ interface ExamEntry {
 export const ExamTimeline: React.FC<ExamTimelineProps> = ({
   selectedCourses,
   allCourses,
+  onNavigateToCourses,
 }) => {
   const [filterMode, setFilterMode] = React.useState<'selected' | 'all'>('selected');
 
@@ -123,9 +125,34 @@ export const ExamTimeline: React.FC<ExamTimelineProps> = ({
 
       {/* Timeline Content */}
       {sortedDates.length === 0 ? (
-        <div className="py-12 text-center text-slate-400">
-          <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          <p className="text-xs">هیچ امتحانی در لیست انتخابی شما قرار ندارد.</p>
+        <div className="py-10 px-4 text-center">
+          <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto mb-3">
+            <Clock className="w-6 h-6" />
+          </div>
+          <h3 className="text-sm font-bold text-slate-800 mb-1">
+            هیچ امتحانی در لیست انتخابی شما قرار ندارد
+          </h3>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto mb-4 leading-relaxed">
+            برای مشاهده تقویم امتحانات، دروس مورد نظرتان را انتخاب کنید یا گزینه «همه آزمون‌ها» را فعال نمایید.
+          </p>
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setFilterMode('all')}
+              className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors cursor-pointer"
+            >
+              مشاهده تقویم تمام آزمون‌های ترم
+            </button>
+            {onNavigateToCourses && (
+              <button
+                type="button"
+                onClick={onNavigateToCourses}
+                className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
+              >
+                انتخاب دروس
+              </button>
+            )}
+          </div>
         </div>
       ) : (
         <div className="mt-5 relative">

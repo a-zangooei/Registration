@@ -4,13 +4,14 @@ import path from 'path';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig(() => {
+export default defineConfig(({ command }) => {
   return {
     base: './',
     plugins: [
       react(),
       tailwindcss(),
       VitePWA({
+        disable: command === 'serve' && process.env.DISABLE_HMR === 'true',
         registerType: 'autoUpdate',
         includeAssets: [
           'favicon.ico',
@@ -145,12 +146,14 @@ export default defineConfig(() => {
         devOptions: {
           enabled: false,
         },
+        injectRegister: null,
       }),
     ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
       },
+      dedupe: ['react', 'react-dom'],
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.

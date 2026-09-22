@@ -1,55 +1,86 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRegisterSW } from 'virtual:pwa-register/react';
 
 export function usePWAUpdate() {
   const registrationRef = useRef<ServiceWorkerRegistration | null>(null);
+  const [needRefresh, setNeedRefresh] = useState<boolean>(false);
+  const [offlineReady, setOfflineReady] = useState<boolean>(false);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
   const [updateCheckResult, setUpdateCheckResult] = useState<'latest' | 'updated' | null>(null);
 
-  const {
-    offlineReady: [offlineReady, setOfflineReady],
-    needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker,
-  } = useRegisterSW({
-    onRegistered(r) {
-      if (r) {
-        registrationRef.current = r;
+  // Register service worker and wire update events
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+      return;
+    }
 
-        // 1. Immediately check for update on app startup if online
-        if (navigator.onLine) {
-          r.update().catch((e) => console.warn('SW initial update check:', e));
+    let isSubscribed = true;
+    let cleanupListeners: (() => void) | null = null;
+
+    const registerAndListen = async () => {
+      try {
+        // Register the production service worker (sw.js)
+        const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+        if (!isSubscribed) return;
+        registrationRef.current = reg;
+
+        // If there's already a waiting worker, notify user
+        if (reg.waiting) {
+          setNeedRefresh(true);
         }
 
-        // 2. Check for update when the PWA is brought to foreground (visibilitychange)
+        // Listen for new workers installing and waiting
+        const onUpdateFound = () => {
+          const newWorker = reg.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed') {
+                if (navigator.serviceWorker.controller) {
+                  // A new version is ready and waiting to take over
+                  setNeedRefresh(true);
+                } else {
+                  // Content is cached for offline use for the first time
+                  setOfflineReady(true);
+                }
+              }
+            });
+          }
+        };
+        reg.addEventListener('updatefound', onUpdateFound);
+
+        // 1. Initial check when online
+        if (navigator.onLine) {
+          reg.update().catch(() => {});
+        }
+
+        // 2. Periodic background check every 15 minutes
+        const intervalId = setInterval(() => {
+          if (navigator.onLine && registrationRef.current) {
+            registrationRef.current.update().catch(() => {});
+          }
+        }, 15 * 60 * 1000);
+
+        // 3. Check when app returns to foreground
         const handleVisibilityChange = () => {
-          if (document.visibilityState === 'visible' && navigator.onLine) {
-            r.update().catch((e) => console.warn('SW visibility update check:', e));
+          if (document.visibilityState === 'visible' && navigator.onLine && registrationRef.current) {
+            registrationRef.current.update().catch(() => {});
           }
         };
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
-        // 3. Periodic check every 15 minutes
-        const intervalId = setInterval(() => {
-          if (navigator.onLine) {
-            r.update().catch((e) => console.warn('SW periodic check:', e));
-          }
-        }, 15 * 60 * 1000);
-
-        return () => {
-          document.removeEventListener('visibilitychange', handleVisibilityChange);
+        cleanupListeners = () => {
+          reg.removeEventListener('updatefound', onUpdateFound);
           clearInterval(intervalId);
+          document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
+      } catch (err) {
+        // In dev mode without sw.js or if registration fails, handle gracefully
+        console.debug('ServiceWorker registration skipped or failed in dev mode:', err);
       }
-    },
-    onRegisterError(error) {
-      console.warn('Service Worker registration error:', error);
-    },
-  });
+    };
 
-  // Automatically reload when the new Service Worker takes control (controllerchange)
-  useEffect(() => {
-    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return;
+    registerAndListen();
 
+    // Reload when the new Service Worker takes control (controllerchange)
     let refreshing = false;
     const handleControllerChange = () => {
       if (!refreshing) {
@@ -57,16 +88,21 @@ export function usePWAUpdate() {
         window.location.reload();
       }
     };
-
     navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+
     return () => {
+      isSubscribed = false;
       navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      if (cleanupListeners) {
+        cleanupListeners();
+      }
     };
   }, []);
 
   // Manual Check for Updates
   const checkForUpdate = useCallback(async () => {
     if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+      setUpdateCheckResult('latest');
       return;
     }
 
@@ -100,12 +136,17 @@ export function usePWAUpdate() {
         setUpdateCheckResult(null);
       }, 4000);
     }
-  }, [setNeedRefresh]);
+  }, []);
 
   // Apply update and reload
   const applyUpdate = useCallback(() => {
-    updateServiceWorker(true);
-  }, [updateServiceWorker]);
+    const reg = registrationRef.current;
+    if (reg?.waiting) {
+      reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    }
+    // Also trigger reload
+    window.location.reload();
+  }, []);
 
   // Force clean all caches and hard reload (in case of stubborn cached assets)
   const forceCleanAndReload = useCallback(async () => {

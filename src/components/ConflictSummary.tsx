@@ -6,12 +6,14 @@ interface ConflictSummaryProps {
   conflictMap: Record<string, ConflictReason[]>;
   courses: Course[];
   selectedCourseIds: string[];
+  onRemoveCourse?: (courseId: string) => void;
 }
 
 export const ConflictSummary: React.FC<ConflictSummaryProps> = ({
   conflictMap,
   courses,
   selectedCourseIds,
+  onRemoveCourse,
 }) => {
   // Aggregate unique conflicts
   const allConflicts: { course: Course; reasons: ConflictReason[] }[] = [];
@@ -52,11 +54,23 @@ export const ConflictSummary: React.FC<ConflictSummaryProps> = ({
             key={course.id}
             className="bg-white p-3 rounded-xl border border-rose-200 text-xs text-slate-800 shadow-2xs"
           >
-            <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <div className="flex items-center justify-between pb-1.5 border-b border-slate-100 gap-2">
               <span className="font-bold text-rose-950 truncate">{course.name}</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
-                {course.code}
-              </span>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                  {course.code}
+                </span>
+                {onRemoveCourse && (
+                  <button
+                    type="button"
+                    onClick={() => onRemoveCourse(course.id)}
+                    className="text-[10px] text-rose-700 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-2 py-0.5 rounded-lg transition-colors font-bold cursor-pointer"
+                    title="حذف این درس جهت رفع تداخل"
+                  >
+                    حذف
+                  </button>
+                )}
+              </div>
             </div>
 
             <ul className="mt-2 space-y-1.5">

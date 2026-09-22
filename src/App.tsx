@@ -287,6 +287,7 @@ export default function App() {
           conflictMap={conflictMap}
           courses={coursesData}
           selectedCourseIds={selectedCourseIds}
+          onRemoveCourse={handleToggleCourse}
         />
 
         {/* ========================================================================= */}
@@ -359,16 +360,24 @@ export default function App() {
               isCurrentMatchingSaved={isCurrentMatchingSaved}
               isOpenedFromShortcut={isOpenedFromShortcut}
               savedScheduleDate={savedSemesterSchedule?.savedAt}
+              onNavigateToCourses={() => {
+                const el = document.getElementById('courses-catalog');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
             />
           ) : (
             <ExamTimeline
               selectedCourses={selectedCourses}
               allCourses={coursesData}
+              onNavigateToCourses={() => {
+                const el = document.getElementById('courses-catalog');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
             />
           )}
 
           {/* Courses Selection Catalog */}
-          <div className="pt-2">
+          <div id="courses-catalog" className="pt-2">
             <div className="flex items-center justify-between mb-3 px-1">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-teal-700" />
@@ -451,6 +460,7 @@ export default function App() {
                 isCurrentMatchingSaved={isCurrentMatchingSaved}
                 isOpenedFromShortcut={isOpenedFromShortcut}
                 savedScheduleDate={savedSemesterSchedule?.savedAt}
+                onNavigateToCourses={() => setMobileTab('courses')}
               />
             </div>
           )}
@@ -460,6 +470,7 @@ export default function App() {
               <ExamTimeline
                 selectedCourses={selectedCourses}
                 allCourses={coursesData}
+                onNavigateToCourses={() => setMobileTab('courses')}
               />
             </div>
           )}
