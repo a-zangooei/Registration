@@ -1,6 +1,6 @@
 /**
- * Course and Academic Term Data
- * Loaded dynamically from modular JSON datasets for seamless extensibility.
+ * Medical Course and Academic Term Data
+ * Loaded from medical curriculum dataset (Semesters 3, 4, 5).
  */
 
 export {

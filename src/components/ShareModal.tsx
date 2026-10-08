@@ -69,7 +69,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
   const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(
     shareUrl
   )}&text=${encodeURIComponent(
-    `برنامه انتخاب واحد من (${selectedCourses.length} درس، ${totalUnits} واحد) در سامانه علوم پایه پزشکی:`
+    `برنامه انتخاب واحد من (${selectedCourses.length} درس، ${totalUnits} واحد) در سامانه جامع انتخاب واحد دانشگاهی:`
   )}`;
 
   return (

@@ -1,4 +1,4 @@
-export type DayOfWeek = 'شنبه' | 'یکشنبه' | 'دوشنبه' | 'سه‌شنبه' | 'چهارشنبه';
+export type DayOfWeek = 'شنبه' | 'یکشنبه' | 'دوشنبه' | 'سه‌شنبه' | 'چهارشنبه' | 'پنج‌شنبه';
 
 export interface TimeSlot {
   day: DayOfWeek;
@@ -33,7 +33,7 @@ export interface Course {
   id: string;
   code: string;
   name: string;
-  term: 3 | 4 | 5;
+  term: number;
   courseTypeString: string; // e.g. "الزامی پایه", "شناور عمومی", "شناور پایه"
   category: CourseCategory;  // specialized (اختصاصی/پایه) or general (عمومی)
   units: {

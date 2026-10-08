@@ -1,8 +1,8 @@
 import { Course, CurriculumDataset } from '../types';
-import defaultDatasetJson from './datasets/term-05-fall-1403.json';
+import medicalDatasetJson from './datasets/term-05-fall-1403.json';
 
-// Cast imported JSON to typed CurriculumDataset
-export const DEFAULT_CURRICULUM: CurriculumDataset = defaultDatasetJson as unknown as CurriculumDataset;
+// Single Official Curriculum: Medical Basic Sciences (Semesters 3, 4, 5)
+export const DEFAULT_CURRICULUM: CurriculumDataset = medicalDatasetJson as unknown as CurriculumDataset;
 
 // Re-export common helpers and constants
 export const COURSES_DATA: Course[] = DEFAULT_CURRICULUM.courses;

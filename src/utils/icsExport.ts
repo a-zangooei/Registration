@@ -13,6 +13,7 @@ const DAY_TO_RRULE_MAP: Record<DayOfWeek, string> = {
   دوشنبه: 'MO',
   'سه‌شنبه': 'TU',
   چهارشنبه: 'WE',
+  'پنج‌شنبه': 'TH',
 };
 
 export interface LocalCalendarDateTime {
@@ -162,6 +163,7 @@ function getFirstOccurrenceDate(day: DayOfWeek, refDate: Date): { year: number; 
     دوشنبه: 1,
     'سه‌شنبه': 2,
     چهارشنبه: 3,
+    'پنج‌شنبه': 4,
   };
 
   const targetDay = targetDayMap[day];
@@ -267,10 +269,10 @@ export function generateICSContent(
         const dtStart = formatLocalDateTime({ ...dateComp, hour: startH, minute: startM });
         const dtEnd = formatLocalDateTime({ ...dateComp, hour: endH, minute: endM });
 
-        const uid = `class-${course.id}-${slot.day}-${slot.startTime.replace(':', '')}-${Date.now()}@med-planner`;
+        const uid = `class-${course.id}-${slot.day}-${slot.startTime.replace(':', '')}-${Date.now()}@uni-planner`;
         const summary = `کلاس ${course.name} (${slot.label || 'نظری'})`;
         const description = `درس: ${course.name}\\nکد: ${course.code}\\nمدرس: ${course.instructors}\\nواحد: ${course.units.total} واحد\\nنوع: ${slot.label || 'نظری'}${slot.groupName ? `\\nگروه: ${slot.groupName}` : ''}`;
-        const location = slot.location || 'دانشکده پزشکی';
+        const location = slot.location || 'دانشگاه - کلاس درس';
 
         const eventLines = [
           'BEGIN:VEVENT',
@@ -327,7 +329,7 @@ export function generateICSContent(
           `DTEND;TZID=Asia/Tehran:${dtEnd}`,
           `SUMMARY:${escapeICSText(summary)}`,
           `DESCRIPTION:${escapeICSText(description)}`,
-          'LOCATION:دانشکده پزشکی - سالن امتحانات',
+          'LOCATION:دانشگاه - سالن امتحانات',
           'STATUS:CONFIRMED',
           'TRANSP:OPAQUE',
         ];
@@ -377,7 +379,7 @@ export function generateICSContent(
           `DTEND;TZID=Asia/Tehran:${dtEnd}`,
           `SUMMARY:${escapeICSText(summary)}`,
           `DESCRIPTION:${escapeICSText(description)}`,
-          'LOCATION:دانشکده پزشکی - سالن امتحانات متمرکز',
+          'LOCATION:دانشگاه - سالن امتحانات متمرکز',
           'STATUS:CONFIRMED',
           'TRANSP:OPAQUE',
         ];
@@ -420,12 +422,12 @@ export function generateICSContent(
   const icsLines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Medical University Course Planner//FA',
+    'PRODID:-//University Course Planner//FA',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    'X-WR-CALNAME:برنامه انتخاب واحد و امتحانات پزشکی',
+    'X-WR-CALNAME:برنامه انتخاب واحد و امتحانات دانشگاهی',
     'X-WR-TIMEZONE:Asia/Tehran',
-    'X-WR-CALDESC:تقویم هوشمند جلسات هفتگی کلاس‌ها و تاریخ امتحانات علوم پایه پزشکی',
+    'X-WR-CALDESC:تقویم هوشمند جلسات هفتگی کلاس‌ها و تاریخ امتحانات دانشگاهی',
     timezoneBlock,
     ...events,
     'END:VCALENDAR',

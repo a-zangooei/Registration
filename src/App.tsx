@@ -112,7 +112,7 @@ export default function App() {
     savedState?.gender || 'male'
   );
   const [minUnits, setMinUnits] = useState<number>(curriculum.minUnits || 12);
-  const [maxUnits, setMaxUnits] = useState<number>(curriculum.maxUnits || 14.49);
+  const [maxUnits, setMaxUnits] = useState<number>(curriculum.maxUnits || 20);
   const [hoveredCourseId, setHoveredCourseId] = useState<string | null>(null);
   
   // Desktop tab: schedule vs exams
@@ -211,10 +211,15 @@ export default function App() {
   };
 
   const handleSelectPracticalGroup = (courseId: string, groupId: string) => {
-    setSelectedPracticalGroups((prev) => ({
-      ...prev,
-      [courseId]: groupId,
-    }));
+    setSelectedPracticalGroups((prev) => {
+      const next = { ...prev };
+      if (!groupId || groupId === 'floating') {
+        delete next[courseId];
+      } else {
+        next[courseId] = groupId;
+      }
+      return next;
+    });
   };
 
   const handleReset = () => {
@@ -339,9 +344,6 @@ export default function App() {
                 <Download className="w-3.5 h-3.5 text-teal-600" />
                 <span>خروجی تقویم .ics / PDF / تصویر</span>
               </button>
-              <div className="text-xs text-slate-500 font-medium">
-                💡 هاور روی هر درس: نمایش بلادرنگ تداخلات با رنگ قرمز
-              </div>
             </div>
           </div>
 
@@ -382,7 +384,7 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-teal-700" />
                 <h2 className="text-base font-black text-slate-900">
-                  فهرست کامل دروس ارائه‌شده (ترم‌های ۳، ۴ و ۵)
+                  فهرست کامل دروس ارائه‌شده
                 </h2>
               </div>
               <span className="text-xs text-slate-500 font-medium">

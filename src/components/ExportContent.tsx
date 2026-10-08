@@ -211,7 +211,7 @@ export const ExportContent: React.FC<ExportContentProps> = ({
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>برنامه انتخاب واحد علوم پایه پزشکی - ${totalUnits} واحد</title>
+  <title>برنامه انتخاب واحد و تقویم هفتگی - ${totalUnits} واحد</title>
   <style>
     body { font-family: Tahoma, Vazirmatn, system-ui, sans-serif; padding: 24px; color: #0f172a; background: #f8fafc; line-height: 1.6; }
     .container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 32px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
@@ -225,7 +225,7 @@ export const ExportContent: React.FC<ExportContentProps> = ({
 </head>
 <body>
   <div class="container">
-    <h1>گزارش انتخاب واحد و برنامه هفتگی علوم پایه پزشکی</h1>
+    <h1>گزارش انتخاب واحد و برنامه هفتگی دانشگاهی</h1>
     <p>
       <strong>جنسیت:</strong> ${gender === 'male' ? 'برادران' : 'خواهران'} | 
       <strong>تعداد دروس:</strong> ${selectedCourses.length} درس | 
@@ -284,7 +284,7 @@ export const ExportContent: React.FC<ExportContentProps> = ({
     </table>
 
     <div class="footer">
-      تولیدشده به صورت خودکار توسط سامانه هوشمند انتخاب واحد علوم پایه پزشکی • تاریخ صدور: ${new Date().toLocaleDateString('fa-IR')}
+      تولیدشده به صورت خودکار توسط سامانه جامع انتخاب واحد دانشگاهی • تاریخ صدور: ${new Date().toLocaleDateString('fa-IR')}
     </div>
   </div>
 </body>
@@ -331,7 +331,7 @@ export const ExportContent: React.FC<ExportContentProps> = ({
       ctx.textAlign = 'right';
       ctx.direction = 'rtl';
       ctx.fillText(
-        'سامانه هوشمند انتخاب واحد علوم پایه پزشکی - جدول هفتگی و امتحانات',
+        'سامانه جامع انتخاب واحد دانشگاهی - جدول هفتگی و تقویم امتحانات',
         width - 40,
         54
       );

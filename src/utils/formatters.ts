@@ -1,46 +1,36 @@
 /**
- * Course name shorteners and display helpers for medical curriculum
+ * Course name shorteners and display helpers for all university disciplines
  */
 
 export function getShortCourseName(fullName: string): string {
   if (!fullName) return '';
   let name = fullName.trim();
 
-  // Anatomical and physiological systems (keep the critical distinguishing system name!)
+  // General university courses abbreviation
+  name = name.replace(/^آیین زندگی \(اخلاق کاربردی\)/, 'آیین زندگی (اخلاق)');
+  name = name.replace(/^فرهنگ و تمدن اسلام و ایران/, 'فرهنگ و تمدن');
+  name = name.replace(/^دانش خانواده و جمعیت/, 'دانش خانواده');
+  name = name.replace(/^مبانی نظری اسلام \(اندیشه اسلامی ۱\)/, 'اندیشه اسلامی ۱');
+  name = name.replace(/^انقلاب اسلامی ایران و ریشه‌های آن/, 'انقلاب اسلامی');
+  name = name.replace(/^تفسیر موضوعی نهج‌البلاغه/, 'تفسیر نهج‌البلاغه');
+  name = name.replace(/^فارسی عمومی و نگارش علمی/, 'فارسی عمومی');
+  name = name.replace(/^زبان انگلیسی عمومی دانشگاهی/, 'زبان انگلیسی عمومی');
+
+  // Engineering & Science abbreviation
+  name = name.replace(/^مبانی برنامه‌نویسی و الگوریتم‌ها/, 'مبانی برنامه‌نویسی');
+  name = name.replace(/^مدارهای الکتریکی و الکترونیکی/, 'مدارهای الکتریکی');
+  name = name.replace(/^معماری و ساختار کامپیوتر/, 'معماری کامپیوتر');
+  name = name.replace(/^سیستم‌های عامل پیشرفته/, 'سیستم‌های عامل');
+
+  // Medical systems (if medical courses are selected)
   name = name.replace(/^علوم تشریح سیستم ادراری\s*-\s*تناسلی/, 'تشریح ادراری-تناسلی');
-  name = name.replace(/^علوم تشریح سیستم ادراری/, 'تشریح ادراری');
-  name = name.replace(/^علوم تشریح سیستم اعصاب/, 'تشریح اعصاب');
-  name = name.replace(/^علوم تشریح سیستم حواس ویژه/, 'تشریح حواس ویژه');
-  name = name.replace(/^علوم تشریح سر و گردن/, 'تشریح سر و گردن');
   name = name.replace(/^علوم تشریح سیستم\s*/, 'تشریح ');
   name = name.replace(/^علوم تشریح\s*/, 'تشریح ');
-
-  // Physiology
-  name = name.replace(/^فیزیولوژی نظری سیستم ادراری/, 'فیزیولوژی ادراری');
-  name = name.replace(/^فیزیولوژی نظری سیستم اعصاب/, 'فیزیولوژی اعصاب');
-  name = name.replace(/^فیزیولوژی اعصاب و حواس ویژه/, 'فیزیولوژی اعصاب');
-  name = name.replace(/^فیزیولوژی کلیه/, 'فیزیولوژی کلیه');
+  name = name.replace(/^فیزیولوژی نظری سیستم\s*/, 'فیزیولوژی ');
   name = name.replace(/^فیزیولوژی نظری\s*/, 'فیزیولوژی ');
   name = name.replace(/^فیزیولوژی عملی سیستم\s*/, 'فیزیو عملی ');
-  name = name.replace(/^فیزیولوژی عملی\s*/, 'فیزیو عملی ');
-
-  // Pathology & Paraclinical
   name = name.replace(/^پاتولوژی عمومی نظری/, 'پاتولوژی نظری');
   name = name.replace(/^پاتولوژی عمومی عملی/, 'پاتولوژی عملی');
-  name = name.replace(/^آسیب‌شناسی پایه و عمومی/, 'پاتولوژی پایه');
-  name = name.replace(/^اصول پایه فارماکولوژی پزشکی/, 'فارماکولوژی پایه');
-  name = name.replace(/^اصول و مبانی مدیریت خطر، حوادث و بلایا/, 'مدیریت بلایا');
-  name = name.replace(/^اصول اپیدمیولوژی/, 'اپیدمیولوژی');
-  name = name.replace(/^ایمنی‌شناسی پزشکی/, 'ایمنی‌شناسی');
-  name = name.replace(/^انگل‌شناسی پزشکی/, 'انگل‌شناسی');
-  name = name.replace(/^ویروس‌شناسی پزشکی/, 'ویروس‌شناسی');
-  name = name.replace(/^قارچ‌شناسی پزشکی/, 'قارچ‌شناسی');
-
-  // General & Language
-  name = name.replace(/^آیین زندگی \(اخلاق کاربردی\)/, 'آیین زندگی (اخلاق)');
-  name = name.replace(/^فرهنگ و تمدن اسلامی/, 'فرهنگ و تمدن');
-  name = name.replace(/^اندیشه اسلامی ۲/, 'اندیشه اسلامی ۲');
-  name = name.replace(/^زبان تخصصی ۲/, 'زبان تخصصی ۲');
 
   return name;
 }

@@ -82,7 +82,7 @@ export const PrintableReport: React.FC<PrintableReportProps> = ({
       <div className="border-2 border-teal-800 rounded-xl p-4 mb-6 flex justify-between items-center print-force-bg bg-teal-50">
         <div>
           <h1 className="text-xl font-black text-teal-950 mb-1">
-            برنامه رسمی انتخاب واحد علوم پایه پزشکی
+            برنامه رسمی انتخاب واحد و هفتگی دانشگاهی
           </h1>
           <p className="text-xs text-slate-700">
             گزارش جامع شامل فهرست دروس اخذ شده، جدول هفتگی و تقویم امتحانات نیمسال
@@ -259,7 +259,7 @@ export const PrintableReport: React.FC<PrintableReportProps> = ({
       </div>
 
       <div className="mt-8 text-center text-[10px] text-slate-500 border-t border-slate-300 pt-2">
-        سامانه هوشمند و تعاملی انتخاب واحد علوم پایه پزشکی • خروجی یکپارچه و استاندارد
+        سامانه جامع و هوشمند انتخاب واحد دانشگاهی • خروجی یکپارچه و استاندارد
       </div>
     </div>
   );

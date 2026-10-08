@@ -314,7 +314,7 @@ export const SchemaAndAlgorithmModal: React.FC<SchemaAndAlgorithmModalProps> = (
                   چگونه فایل دوره تحصیلی جدید بسازیم؟ (سازگار با GitHub Pages)
                 </h4>
                 <p className="text-[11px] text-teal-900 leading-relaxed mb-3">
-                  تمام داده‌های دروس، ساعات تشکیل، گروه‌های عملی، امتحانات و سقف واحدها در قالب یک فایل <strong>JSON</strong> ذخیره می‌شوند. برای اضافه کردن هر ترم جدید (مثلاً ترم ۶، دانشگاه دیگر یا سال بعد) کافی است این فایل را ایجاد کرده و در مسیر <code className="bg-teal-100 px-1.5 py-0.5 rounded font-mono text-teal-950">public/datasets/</code> گیت‌هاب قرار دهید.
+                  تمام داده‌های دروس، ساعات تشکیل، گروه‌های عملی، امتحانات و سقف واحدها در قالب یک فایل <strong>JSON</strong> ذخیره می‌شوند. برای اضافه کردن هر دوره یا رشته جدید (مثلاً مهندسی، علوم انسانی، پزشکی، دانشگاه‌های دیگر یا سال‌های آینده) کافی است این فایل را ایجاد کرده یا از دکمه افزودن درس در برنامه استفاده کنید.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
