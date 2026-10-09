@@ -25,7 +25,8 @@ interface OfflineManagerModalProps {
   onClose: () => void;
   needRefresh?: boolean;
   isCheckingUpdate?: boolean;
-  updateCheckResult?: 'latest' | 'updated' | null;
+  updateCheckResult?: 'latest' | 'updated' | 'error' | null;
+  updateErrorMessage?: string | null;
   onCheckForUpdate?: () => void;
   onApplyUpdate?: () => void;
   onForceCleanAndReload?: () => void;
@@ -37,6 +38,7 @@ export const OfflineManagerModal: React.FC<OfflineManagerModalProps> = ({
   needRefresh = false,
   isCheckingUpdate = false,
   updateCheckResult = null,
+  updateErrorMessage = null,
   onCheckForUpdate,
   onApplyUpdate,
   onForceCleanAndReload,
@@ -198,6 +200,11 @@ export const OfflineManagerModal: React.FC<OfflineManagerModalProps> = ({
               <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-emerald-900 text-xs font-medium">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>برنامه شما کاملاً به‌روز است (آخرین نسخه روی دستگاه شما فعال است).</span>
+              </div>
+            ) : updateCheckResult === 'error' ? (
+              <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-rose-900 text-xs font-medium">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>{updateErrorMessage || 'خطا در بررسی به‌روزرسانی (عدم دسترسی به اینترنت یا سرویس‌ورکر).'}</span>
               </div>
             ) : (
               <p className="text-[11px] text-slate-600 leading-relaxed">

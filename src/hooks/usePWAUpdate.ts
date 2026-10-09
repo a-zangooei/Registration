@@ -1,11 +1,79 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
+export type PWAUpdateCheckResult = 'latest' | 'updated' | 'error' | null;
+
+/**
+ * Evaluates update status given online status, service worker capability, and registration updater.
+ * Isolated pure logic for robust unit testing and deterministic behavior.
+ */
+export async function performPWAUpdateCheck(
+  isOnline: boolean,
+  hasServiceWorker: boolean,
+  getRegistrationFn: () => Promise<ServiceWorkerRegistration | null | undefined>
+): Promise<{
+  result: 'latest' | 'updated' | 'error';
+  errorMessage?: string;
+  needRefresh: boolean;
+}> {
+  // 1. Explicit offline check: never falsely claim up-to-date when offline
+  if (!isOnline) {
+    return {
+      result: 'error',
+      errorMessage: 'دستگاه شما آفلاین است. برای بررسی نسخه جدید، اتصال اینترنت را برقرار کنید.',
+      needRefresh: false,
+    };
+  }
+
+  // 2. Service Worker support check
+  if (!hasServiceWorker) {
+    return {
+      result: 'error',
+      errorMessage: 'مرورگر شما از Service Worker پشتیبانی نمی‌کند.',
+      needRefresh: false,
+    };
+  }
+
+  try {
+    const reg = await getRegistrationFn();
+    if (!reg) {
+      return {
+        result: 'error',
+        errorMessage: 'سرویس‌ورکر فعال برای بررسی نسخه جدید یافت نشد.',
+        needRefresh: false,
+      };
+    }
+
+    // Call update on the active registration
+    await reg.update();
+
+    if (reg.waiting || reg.installing) {
+      return {
+        result: 'updated',
+        needRefresh: true,
+      };
+    }
+
+    return {
+      result: 'latest',
+      needRefresh: false,
+    };
+  } catch (err: any) {
+    return {
+      result: 'error',
+      errorMessage: err?.message || 'خطا در ارتباط با سرور هنگام دریافت نسخه جدید.',
+      needRefresh: false,
+    };
+  }
+}
+
 export function usePWAUpdate() {
   const registrationRef = useRef<ServiceWorkerRegistration | null>(null);
+  const refreshingRef = useRef<boolean>(false);
   const [needRefresh, setNeedRefresh] = useState<boolean>(false);
   const [offlineReady, setOfflineReady] = useState<boolean>(false);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState<boolean>(false);
-  const [updateCheckResult, setUpdateCheckResult] = useState<'latest' | 'updated' | null>(null);
+  const [updateCheckResult, setUpdateCheckResult] = useState<PWAUpdateCheckResult>(null);
+  const [updateErrorMessage, setUpdateErrorMessage] = useState<string | null>(null);
 
   // Register service worker and wire update events
   useEffect(() => {
@@ -73,7 +141,6 @@ export function usePWAUpdate() {
           document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
       } catch (err) {
-        // In dev mode without sw.js or if registration fails, handle gracefully
         console.debug('ServiceWorker registration skipped or failed in dev mode:', err);
       }
     };
@@ -81,10 +148,9 @@ export function usePWAUpdate() {
     registerAndListen();
 
     // Reload when the new Service Worker takes control (controllerchange)
-    let refreshing = false;
     const handleControllerChange = () => {
-      if (!refreshing) {
-        refreshing = true;
+      if (!refreshingRef.current) {
+        refreshingRef.current = true;
         window.location.reload();
       }
     };
@@ -101,54 +167,67 @@ export function usePWAUpdate() {
 
   // Manual Check for Updates
   const checkForUpdate = useCallback(async () => {
-    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
-      setUpdateCheckResult('latest');
-      return;
-    }
-
     setIsCheckingUpdate(true);
     setUpdateCheckResult(null);
+    setUpdateErrorMessage(null);
 
-    try {
-      const reg = registrationRef.current || (await navigator.serviceWorker.getRegistration());
-      if (reg) {
-        registrationRef.current = reg;
-        await reg.update();
+    const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
+    const hasSW = typeof navigator !== 'undefined' && 'serviceWorker' in navigator;
 
-        // Check if an update is waiting or installing
-        if (reg.waiting || reg.installing) {
-          setNeedRefresh(true);
-          setUpdateCheckResult('updated');
-        } else {
-          // No update found, current version is up to date
-          setUpdateCheckResult('latest');
+    const check = await performPWAUpdateCheck(
+      isOnline,
+      hasSW,
+      async () => {
+        let reg = registrationRef.current;
+        if (!reg && hasSW) {
+          reg = (await navigator.serviceWorker.getRegistration()) || null;
+          if (!reg) {
+            reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+          }
+          if (reg) registrationRef.current = reg;
         }
-      } else {
-        setUpdateCheckResult('latest');
+        return reg;
       }
-    } catch (err) {
-      console.warn('Error checking for PWA update:', err);
-      setUpdateCheckResult('latest');
-    } finally {
-      setIsCheckingUpdate(false);
-      // Reset result after 4 seconds
-      setTimeout(() => {
-        setUpdateCheckResult(null);
-      }, 4000);
+    );
+
+    if (check.needRefresh) {
+      setNeedRefresh(true);
     }
+    setUpdateCheckResult(check.result);
+    if (check.errorMessage) {
+      setUpdateErrorMessage(check.errorMessage);
+    }
+
+    setIsCheckingUpdate(false);
+    setTimeout(() => {
+      setUpdateCheckResult(null);
+      setUpdateErrorMessage(null);
+    }, 5000);
   }, []);
 
-  // Apply update and reload
+  // Apply update and reload safely without race condition
   const applyUpdate = useCallback(() => {
     const reg = registrationRef.current;
     if (reg?.waiting) {
+      // Send message to waiting worker to skip waiting and activate
       reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+
+      // Fallback reload if controllerchange event does not fire within 1500ms
+      setTimeout(() => {
+        if (!refreshingRef.current) {
+          refreshingRef.current = true;
+          window.location.reload();
+        }
+      }, 1500);
+    } else {
+      if (!refreshingRef.current) {
+        refreshingRef.current = true;
+        window.location.reload();
+      }
     }
-    // Also trigger reload
-    window.location.reload();
   }, []);
 
-  // Force clean all caches and hard reload (in case of stubborn cached assets)
+  // Force clean all caches and hard reload (keeping user local storage data intact)
   const forceCleanAndReload = useCallback(async () => {
     try {
       if ('caches' in window) {
@@ -162,7 +241,10 @@ export function usePWAUpdate() {
     } catch (err) {
       console.warn('Error clearing service workers and caches:', err);
     } finally {
-      window.location.reload();
+      if (!refreshingRef.current) {
+        refreshingRef.current = true;
+        window.location.reload();
+      }
     }
   }, []);
 
@@ -175,6 +257,8 @@ export function usePWAUpdate() {
     checkForUpdate,
     isCheckingUpdate,
     updateCheckResult,
+    updateErrorMessage,
     forceCleanAndReload,
   };
 }
+

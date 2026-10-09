@@ -5,7 +5,12 @@
 
 import React, { useState, useMemo } from 'react';
 import { Course, StudentSelections } from './types';
-import { evaluateAllConflicts, getHoverConflicts, getInstantUnselectedConflicts } from './utils/conflictDetector';
+import {
+  evaluateAllConflicts,
+  getHoverConflicts,
+  getInstantUnselectedConflicts,
+  calculateConflictStats,
+} from './utils/conflictDetector';
 import { Navbar } from './components/Navbar';
 import { UnitManager } from './components/UnitManager';
 import { WeeklySchedule } from './components/WeeklySchedule';
@@ -42,6 +47,10 @@ export default function App() {
   // Modular Curriculum dataset
   const [curriculum, setCurriculum] = useState<CurriculumDataset>(DEFAULT_CURRICULUM);
   const coursesData = curriculum.courses;
+  const externalPassedCourses = useMemo(
+    () => curriculum.externalPassedCourses || [],
+    [curriculum]
+  );
 
   // PWA Automatic & Live Background Update Manager
   const {
@@ -51,6 +60,7 @@ export default function App() {
     checkForUpdate,
     isCheckingUpdate,
     updateCheckResult,
+    updateErrorMessage,
     forceCleanAndReload,
   } = usePWAUpdate();
 
@@ -172,31 +182,45 @@ export default function App() {
   );
 
   // Evaluate conflicts for all selected courses
-  const conflictMap = useMemo(() => evaluateAllConflicts(selections), [selections]);
+  const conflictMap = useMemo(
+    () => evaluateAllConflicts(selections, coursesData, externalPassedCourses),
+    [selections, coursesData, externalPassedCourses]
+  );
 
-  // Total active conflicts count
+  // Distinct conflict metrics (unique pairs, overlapping time intervals, affected courses, total reasons)
+  const conflictStats = useMemo(
+    () => calculateConflictStats(selectedCourseIds, conflictMap),
+    [selectedCourseIds, conflictMap]
+  );
+
+  // The primary badge count represents distinct conflicts (unique pairs + isolated prereq/coreq violations), avoiding duplicate counting
   const totalConflictCount = useMemo(() => {
-    let count = 0;
+    // Unique pairs of mutually conflicting courses
+    let count = conflictStats.uniquePairCount;
+    // Plus any unary prerequisite violations that aren't part of an active pairwise selected conflict
     for (const cId of selectedCourseIds) {
-      if (conflictMap[cId] && conflictMap[cId].length > 0) {
-        count += conflictMap[cId].length;
+      const reasons = conflictMap[cId] || [];
+      for (const r of reasons) {
+        if (r.type === 'prerequisite' && !r.conflictingWithCourseId) {
+          count++;
+        }
       }
     }
     return count;
-  }, [selectedCourseIds, conflictMap]);
+  }, [conflictStats, selectedCourseIds, conflictMap]);
 
   // Real-time hover conflicts
   const { conflictingCourseIds, reasons: hoverConflictReasons } = useMemo(() => {
     if (!hoveredCourseId) {
       return { conflictingCourseIds: new Set<string>(), reasons: [] };
     }
-    return getHoverConflicts(hoveredCourseId, selections);
-  }, [hoveredCourseId, selections]);
+    return getHoverConflicts(hoveredCourseId, selections, coursesData, externalPassedCourses);
+  }, [hoveredCourseId, selections, coursesData, externalPassedCourses]);
 
   // Instant conflicts for all unselected courses against selected courses (immediate on mobile and desktop)
   const instantUnselectedConflicts = useMemo(() => {
-    return getInstantUnselectedConflicts(selections);
-  }, [selections]);
+    return getInstantUnselectedConflicts(selections, coursesData, externalPassedCourses);
+  }, [selections, coursesData, externalPassedCourses]);
 
   // Check whether current selections match the saved semester schedule
   const isCurrentMatchingSaved = useMemo(() => {
@@ -290,6 +314,7 @@ export default function App() {
         {/* Live Conflict Summary Banner */}
         <ConflictSummary
           conflictMap={conflictMap}
+          conflictStats={conflictStats}
           courses={coursesData}
           selectedCourseIds={selectedCourseIds}
           onRemoveCourse={handleToggleCourse}
@@ -574,6 +599,7 @@ export default function App() {
         needRefresh={needRefresh}
         isCheckingUpdate={isCheckingUpdate}
         updateCheckResult={updateCheckResult}
+        updateErrorMessage={updateErrorMessage}
         onCheckForUpdate={checkForUpdate}
         onApplyUpdate={applyUpdate}
         onForceCleanAndReload={forceCleanAndReload}

@@ -30,12 +30,13 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci || npm install
-          else
-            npm install
-          fi
+        run: npm ci
+
+      - name: Run TypeScript typecheck
+        run: npm run lint
+
+      - name: Run automated tests
+        run: npm test
 
       - name: Build static site
         run: npm run build

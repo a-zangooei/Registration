@@ -20,7 +20,9 @@ export interface PracticalGroup {
 
 export interface ExamDetail {
   date: string;       // Jalali date string e.g. "1405/08/30"
-  time?: string;      // e.g. "08:30" or "10:00"
+  time?: string;      // e.g. "08:30" or "10:00 - 12:00"
+  startTime?: string; // e.g. "08:30"
+  endTime?: string;   // e.g. "10:30"
   isFullDeletion?: boolean; // حذفی کامل
   type: 'midterm' | 'final';
   notes?: string;
@@ -67,6 +69,17 @@ export interface Course {
   };
 }
 
+export interface ConflictStats {
+  /** تعداد جفت‌درس‌های یکتای دارای تداخل */
+  uniquePairCount: number;
+  /** تعداد بازه‌های زمانی متداخل (شامل جلسات کلاس و امتحانات) */
+  overlappingTimeSlotCount: number;
+  /** تعداد درس‌هایی که دست‌کم یک تداخل دارند */
+  affectedCourseCount: number;
+  /** کل تعداد علت‌ها و هشدارهای تداخل ثبت‌شده */
+  totalReasonCount: number;
+}
+
 export interface ConflictReason {
   type: 'class_time' | 'exam_date' | 'prerequisite' | 'corequisite';
   title: string;
@@ -75,6 +88,8 @@ export interface ConflictReason {
   conflictingWithCourseName?: string;
   details?: string;
   severity?: 'error' | 'warning';
+  /** کلید یکتا برای بازه زمانی متداخل جهت جلوگیری از دوباره‌شماری تقارنی */
+  intervalKey?: string;
 }
 
 export interface CourseConflictResult {
@@ -99,6 +114,11 @@ export interface CurriculumDataset {
   minUnits: number;
   maxUnits: number;
   description?: string;
+  version?: string;
+  lastReviewed?: string;
+  source?: string;
+  verificationStatus?: 'verified' | 'needs_review';
+  reviewNotes?: string;
   externalPassedCourses: string[];
   courses: Course[];
 }
@@ -110,5 +130,10 @@ export interface SemesterManifestItem {
   termNumber: number;
   path: string;
   isDefault?: boolean;
+  version?: string;
+  lastReviewed?: string;
+  source?: string;
+  verificationStatus?: 'verified' | 'needs_review';
+  reviewNotes?: string;
 }
 
