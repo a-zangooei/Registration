@@ -435,27 +435,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* 2. Menu Action Items */}
             <div className="space-y-2 pt-1 border-t border-slate-100">
-              {/* Calendar Trigger */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onOpenCalendarModal();
-                }}
-                className="w-full flex items-center justify-between p-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-950 border border-teal-200 text-xs font-bold transition-colors text-right"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center shrink-0">
-                    <Calendar className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span>انتقال به تقویم شخصی</span>
-                    <p className="text-[10px] text-teal-700 font-normal">تقویم سامسونگ، گوگل و آیفون با آلارم</p>
-                  </div>
-                </div>
-                <ChevronLeft className="w-4 h-4 text-teal-600" />
-              </button>
-
               {/* Semester Schedule / Android Shortcut in Mobile Menu */}
               {onOpenSemesterModal && (
                 <button
@@ -554,27 +533,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                         ? '۱۰۰٪ فایل‌ها در حافظه ذخیره و آماده‌اند'
                         : 'کلیک جهت دانلود و ذخیره بدون اینترنت'}
                     </p>
-                  </div>
-                </div>
-                <ChevronLeft className="w-4 h-4 text-slate-400" />
-              </button>
-
-              {/* Export Trigger */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onOpenExportModal();
-                }}
-                className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 text-xs font-bold transition-colors text-right"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-slate-700 text-white flex items-center justify-center shrink-0">
-                    <Download className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span>خروجی جامع (PDF / تقویم / عکس)</span>
-                    <p className="text-[10px] text-slate-500 font-normal">خروجی فایل‌ها و چاپ مستقیم A4</p>
                   </div>
                 </div>
                 <ChevronLeft className="w-4 h-4 text-slate-400" />

@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
-    "test": "tsx src/utils/__tests__/examConflict.test.ts && tsx src/utils/__tests__/curriculumValidation.test.ts && tsx src/utils/__tests__/pwaUpdate.test.ts && tsx src/utils/__tests__/ciReproducibility.test.ts",
+    "test": "tsx src/utils/__tests__/examConflict.test.ts && tsx src/utils/__tests__/curriculumValidation.test.ts && tsx src/utils/__tests__/pwaUpdate.test.ts && tsx src/utils/__tests__/ciReproducibility.test.ts && tsx src/utils/__tests__/conflictResolver.test.ts && tsx src/utils/__tests__/upcomingClass.test.ts",
     "termux:setup": "npm install --save-dev lightningcss-android-arm64 @tailwindcss/oxide-android-arm64 @rollup/rollup-android-arm64 @esbuild/android-arm64"
   },
   "engines": {

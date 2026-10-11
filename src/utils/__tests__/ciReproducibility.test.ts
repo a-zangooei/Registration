@@ -134,6 +134,47 @@ runTest('۶. اجرای قطعی npm ci، تست‌ها و اعتبارسنجی 
   );
 });
 
+// ۷. اعتبارسنجی همگام‌سازی README با واقعیت مخزن و دستورهای پروژه
+runTest('۷. همگام‌سازی کامل README با مخزن Registration، اسکریپت‌های واقعی و سقف واحدها', () => {
+  const readmePath = path.join(rootDir, 'README.md');
+  assert.ok(fs.existsSync(readmePath), 'فایل README.md باید وجود داشته باشد');
+  const readmeContent = fs.readFileSync(readmePath, 'utf8');
+
+  // ۱. عدم وجود آدرس نمونه قدیمی و حضور نام واقعی مخزن
+  assert.strictEqual(
+    readmeContent.includes('medical-course-scheduler'),
+    false,
+    'آدرس نمونه قدیمی medical-course-scheduler نباید در README باقی مانده باشد'
+  );
+  assert.match(
+    readmeContent,
+    /Registration(?:\.git)?/,
+    'نشانی یا نام مخزن واقعی Registration باید در راهنمای کلون قید شده باشد'
+  );
+
+  // ۲. انطباق اسکریپت‌های اجرایی
+  const essentialScripts = ['npm install', 'npm ci', 'npm run dev', 'npm run lint', 'npm test', 'npm run build', 'npm run preview'];
+  essentialScripts.forEach((cmd) => {
+    assert.ok(
+      readmeContent.includes(cmd),
+      `دستور واقعی ${cmd} باید در بخش راهنمای اجرای README مستند شده باشد`
+    );
+  });
+
+  // ۳. انطباق سقف واحد پیش‌فرض با منبع واقعی داده‌ها (۲۰ واحد)
+  assert.match(
+    readmeContent,
+    /سقف مجاز.*۲۰ واحد/s,
+    'سقف پیش‌فرض در README باید با منبع واقعی دیتاست (۲۰ واحد) مطابقت داشته باشد'
+  );
+
+  // ۴. مستندسازی مسیرهای واقعی دیتاست‌ها
+  assert.ok(
+    readmeContent.includes('src/data/datasets') && readmeContent.includes('public/datasets'),
+    'مسیرهای معتبر دیتاست‌ها باید در README مستند شده باشند'
+  );
+});
+
 console.log(`\n-----------------------------------------------------------`);
 console.log(`CI & Reproducibility Results: ${passedTests}/${totalTests} tests passed successfully.`);
 console.log(`-----------------------------------------------------------\n`);

@@ -128,11 +128,8 @@ export default function App() {
   // Desktop tab: schedule vs exams
   const [desktopView, setDesktopView] = useState<'schedule' | 'exams'>('schedule');
 
-  // Mobile navigation tab: default to 'schedule' if shortcut=schedule was tapped
-  const [mobileTab, setMobileTab] = useState<ActiveMobileTab>(() => {
-    if (shortcutScheduleRequested) return 'schedule';
-    return 'courses';
-  });
+  // Mobile navigation tab: default to 'schedule' (برنامه هفتگی) for quick on-the-go access
+  const [mobileTab, setMobileTab] = useState<ActiveMobileTab>('schedule');
 
   // Modals
   const [isSchemaModalOpen, setIsSchemaModalOpen] = useState<boolean>(false);
@@ -246,6 +243,20 @@ export default function App() {
     });
   };
 
+  const handleApplyGroupSuggestion = (
+    courseId: string,
+    newGroupId: string,
+    secondaryChange?: { courseId: string; newGroupId: string }
+  ) => {
+    setSelectedPracticalGroups((prev) => {
+      const next = { ...prev, [courseId]: newGroupId };
+      if (secondaryChange) {
+        next[secondaryChange.courseId] = secondaryChange.newGroupId;
+      }
+      return next;
+    });
+  };
+
   const handleReset = () => {
     setSelectedCourseIds([]);
     setSelectedPracticalGroups({});
@@ -301,24 +312,31 @@ export default function App() {
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-4 sm:mt-5 space-y-4 sm:space-y-5 no-print">
         
-        {/* Unit Manager and Rules Bar */}
-        <UnitManager
-          minUnits={minUnits}
-          maxUnits={maxUnits}
-          onMinUnitsChange={setMinUnits}
-          onMaxUnitsChange={setMaxUnits}
-          selectedCourses={selectedCourses}
-          allCourses={coursesData}
-        />
+        {/* Unit Manager and Rules Bar: always visible on desktop, on mobile only visible in courses tab */}
+        <div className={mobileTab === 'courses' ? 'block' : 'hidden lg:block'}>
+          <UnitManager
+            minUnits={minUnits}
+            maxUnits={maxUnits}
+            onMinUnitsChange={setMinUnits}
+            onMaxUnitsChange={setMaxUnits}
+            selectedCourses={selectedCourses}
+            allCourses={coursesData}
+          />
+        </div>
 
-        {/* Live Conflict Summary Banner */}
-        <ConflictSummary
-          conflictMap={conflictMap}
-          conflictStats={conflictStats}
-          courses={coursesData}
-          selectedCourseIds={selectedCourseIds}
-          onRemoveCourse={handleToggleCourse}
-        />
+        {/* Live Conflict Summary Banner: always visible on desktop, on mobile only visible in courses tab */}
+        <div className={mobileTab === 'courses' ? 'block' : 'hidden lg:block'}>
+          <ConflictSummary
+            conflictMap={conflictMap}
+            conflictStats={conflictStats}
+            courses={coursesData}
+            selectedCourseIds={selectedCourseIds}
+            selections={selections}
+            externalPassedCourses={externalPassedCourses}
+            onRemoveCourse={handleToggleCourse}
+            onApplyGroupSuggestion={handleApplyGroupSuggestion}
+          />
+        </div>
 
         {/* ========================================================================= */}
         {/* DESKTOP VIEW (lg:block): Wide view with schedule/exams switcher and catalog */}

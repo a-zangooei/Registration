@@ -90,13 +90,39 @@ export interface UpcomingClassResult {
 }
 
 /**
+ * Computes the effective cutoff time in minutes for a class slot.
+ * For classes with standard 2-hour duration (between 90 and 120 minutes),
+ * the effective cutoff is 90 minutes (1:30h) after start time.
+ * For example:
+ * - 08:00 - 10:00: shown as ongoing until 09:30. At 09:30, it frees up to show the 10:00 class next.
+ * For shorter classes (<90 min), the normal end time is respected.
+ */
+export function getEffectiveSlotCutoffMinutes(startTime: string, endTime: string): number {
+  const startM = timeToMinutes(startTime);
+  const endM = timeToMinutes(endTime);
+  const duration = endM - startM;
+
+  if (duration >= 90) {
+    // 90 minutes (1:30 hour) from start
+    return startM + 90;
+  }
+  return endM;
+}
+
+/**
  * Finds the earliest upcoming or ongoing class based on Iran time.
+ * - Only includes definite slots (ignores unselected tentative practical groups).
+ * - Treats 2-hour classes as effective 1:30 hours so back-to-back classes show the next class early.
  */
 export function findUpcomingClass(
   activeSlots: { course: Course; slot: TimeSlot }[],
   currentIranTime: IranTimeInfo = getIranCurrentTime()
 ): UpcomingClassResult | null {
   if (!activeSlots || activeSlots.length === 0) return null;
+
+  // Filter out unselected / floating practical slots (isTentative)
+  const definiteSlots = activeSlots.filter(({ slot }) => !slot.isTentative);
+  if (definiteSlots.length === 0) return null;
 
   const nowMinutes = currentIranTime.totalMinutes;
   const todayIndex = currentIranTime.dayIndex;
@@ -112,16 +138,17 @@ export function findUpcomingClass(
   };
 
   // 1. Check if there's an ongoing class right now
-  const ongoing = activeSlots.find(({ slot }) => {
+  // A class is ongoing if nowMinutes >= startM and nowMinutes < effectiveCutoffM (e.g. 08:00 to 09:30 for 08:00-10:00)
+  const ongoing = definiteSlots.find(({ slot }) => {
     if (dayIndexMap[slot.day] !== todayIndex) return false;
     const startM = timeToMinutes(slot.startTime);
-    const endM = timeToMinutes(slot.endTime);
-    return nowMinutes >= startM && nowMinutes < endM;
+    const effectiveCutoffM = getEffectiveSlotCutoffMinutes(slot.startTime, slot.endTime);
+    return nowMinutes >= startM && nowMinutes < effectiveCutoffM;
   });
 
   if (ongoing) {
     const endM = timeToMinutes(ongoing.slot.endTime);
-    const remaining = endM - nowMinutes;
+    const remaining = Math.max(0, endM - nowMinutes);
     return {
       type: 'ongoing',
       course: ongoing.course,
@@ -133,8 +160,8 @@ export function findUpcomingClass(
     };
   }
 
-  // 2. Check for upcoming classes later today
-  const upcomingToday = activeSlots
+  // 2. Check for upcoming classes later today (classes starting after nowMinutes)
+  const upcomingToday = definiteSlots
     .filter(({ slot }) => {
       if (dayIndexMap[slot.day] !== todayIndex) return false;
       const startM = timeToMinutes(slot.startTime);
@@ -160,10 +187,10 @@ export function findUpcomingClass(
     };
   }
 
-  // 3. Search future days of the week (1 to 6 days ahead)
+  // 3. Search future days of the week (1 to 7 days ahead)
   for (let offset = 1; offset <= 7; offset++) {
     const targetDayIndex = (todayIndex + offset) % 7;
-    const slotsOnDay = activeSlots
+    const slotsOnDay = definiteSlots
       .filter(({ slot }) => dayIndexMap[slot.day] === targetDayIndex)
       .sort((a, b) => timeToMinutes(a.slot.startTime) - timeToMinutes(b.slot.startTime));
 
