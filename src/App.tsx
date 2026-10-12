@@ -27,6 +27,8 @@ import { BottomNav, ActiveMobileTab } from './components/BottomNav';
 import { OfflineManagerModal } from './components/OfflineManagerModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { SemesterScheduleModal } from './components/SemesterScheduleModal';
+import { DatasetVerificationBanner } from './components/DatasetVerificationBanner';
+import { DatasetReviewModal } from './components/DatasetReviewModal';
 import { PWAUpdateNotification } from './components/PWAUpdateNotification';
 import { usePWAUpdate } from './hooks/usePWAUpdate';
 import { decodeScheduleFromParams, syncScheduleToUrl } from './utils/urlSharing';
@@ -138,6 +140,7 @@ export default function App() {
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
   const [isOfflineModalOpen, setIsOfflineModalOpen] = useState<boolean>(false);
   const [isSemesterModalOpen, setIsSemesterModalOpen] = useState<boolean>(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
 
   // Synchronize browser URL query parameters and local offline persistence
   React.useEffect(() => {
@@ -305,6 +308,8 @@ export default function App() {
         onOpenShareModal={() => setIsShareModalOpen(true)}
         onOpenOfflineModal={() => setIsOfflineModalOpen(true)}
         onOpenSemesterModal={() => setIsSemesterModalOpen(true)}
+        onOpenReviewModal={() => setIsReviewModalOpen(true)}
+        isReviewNeeded={curriculum.verificationStatus === 'needs_review'}
         hasSavedSemesterSchedule={!!savedSemesterSchedule}
         needRefresh={needRefresh}
       />
@@ -312,6 +317,12 @@ export default function App() {
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-4 sm:mt-5 space-y-4 sm:space-y-5 no-print">
         
+        {/* Dataset Verification Banner (Prominent top banner when dataset is in needs_review state) */}
+        <DatasetVerificationBanner
+          curriculum={curriculum}
+          onOpenReviewModal={() => setIsReviewModalOpen(true)}
+        />
+
         {/* Unit Manager and Rules Bar: always visible on desktop, on mobile only visible in courses tab */}
         <div className={mobileTab === 'courses' ? 'block' : 'hidden lg:block'}>
           <UnitManager
@@ -642,6 +653,13 @@ export default function App() {
         onSaveCurrentAsSemester={handleSaveCurrentAsSemester}
         onLoadSavedSemester={handleLoadSavedSemester}
         onClearSavedSemester={handleClearSavedSemester}
+      />
+
+      {/* Dataset Verification Audit and Unverified Items Modal */}
+      <DatasetReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        curriculum={curriculum}
       />
 
       {/* Persistent Offline Status Floating Indicator */}

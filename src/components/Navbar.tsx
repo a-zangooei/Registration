@@ -33,6 +33,8 @@ interface NavbarProps {
   onOpenShareModal: () => void;
   onOpenOfflineModal: () => void;
   onOpenSemesterModal?: () => void;
+  onOpenReviewModal?: () => void;
+  isReviewNeeded?: boolean;
   hasSavedSemesterSchedule?: boolean;
   needRefresh?: boolean;
 }
@@ -50,6 +52,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenShareModal,
   onOpenOfflineModal,
   onOpenSemesterModal,
+  onOpenReviewModal,
+  isReviewNeeded = false,
   hasSavedSemesterSchedule = false,
   needRefresh = false,
 }) => {
@@ -348,6 +352,36 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <ChevronLeft className="w-3.5 h-3.5 text-slate-400" />
                   </button>
 
+                  {/* Dataset Verification Audit */}
+                  {onOpenReviewModal && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsToolsMenuOpen(false);
+                        onOpenReviewModal();
+                      }}
+                      className="w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-bold text-slate-800 hover:bg-amber-50 transition-colors text-right"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                          <ShieldAlert className="w-4 h-4 text-amber-700" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span>ممیزی اطلاعات آموزشی</span>
+                            {isReviewNeeded && (
+                              <span className="text-[9px] bg-amber-600 text-white px-1.5 py-0.5 rounded-full font-bold">
+                                نیاز به بازبینی
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-slate-500 font-normal">چک‌لیست اقلام تأییدنشده و سال امتحانات</p>
+                        </div>
+                      </div>
+                      <ChevronLeft className="w-3.5 h-3.5 text-slate-400" />
+                    </button>
+                  )}
+
                   <div className="h-px bg-slate-100 my-1"></div>
 
                   {/* Reset */}
@@ -558,6 +592,36 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
                 <ChevronLeft className="w-4 h-4 text-slate-400" />
               </button>
+
+              {/* Dataset Verification Audit */}
+              {onOpenReviewModal && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onOpenReviewModal();
+                  }}
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-50/70 hover:bg-amber-100/70 text-amber-950 border border-amber-300 text-xs font-bold transition-colors text-right"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-amber-600 text-white flex items-center justify-center shrink-0">
+                      <ShieldAlert className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span>ممیزی اطلاعات آموزشی</span>
+                        {isReviewNeeded && (
+                          <span className="text-[9px] bg-amber-600 text-white px-1.5 py-0.5 rounded-full font-bold">
+                            نیاز به بازبینی
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-amber-800 font-normal">چک‌لیست اقلام تأییدنشده و سال امتحانات</p>
+                    </div>
+                  </div>
+                  <ChevronLeft className="w-4 h-4 text-amber-700" />
+                </button>
+              )}
 
               {/* Reset */}
               <button

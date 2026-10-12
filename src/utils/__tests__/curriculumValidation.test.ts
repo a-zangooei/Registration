@@ -343,6 +343,47 @@ runTest('۱۸. ممیزی تاریخ‌های امتحانات و مستندسا
   assert.strictEqual(DEFAULT_CURRICULUM.verificationStatus, 'needs_review');
 });
 
+// ۱۹. همگامی ۱۰۰٪ و عدم انحراف دیتاست‌های تکراری در src/data/datasets و public/datasets
+runTest('۱۹. تضمین تطابق کامل بایت‌به‌بایت و عمیق (Deep Equality) دیتاست‌ها در src و public', async () => {
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+
+  const srcDir = path.resolve('src/data/datasets');
+  const publicDir = path.resolve('public/datasets');
+
+  const srcFiles = fs.readdirSync(srcDir).filter((f: string) => f.endsWith('.json'));
+  assert.ok(srcFiles.length > 0, 'حداقل یک فایل دیتاست باید در src وجود داشته باشد');
+
+  for (const file of srcFiles) {
+    const srcFilePath = path.join(srcDir, file);
+    const publicFilePath = path.join(publicDir, file);
+
+    assert.ok(
+      fs.existsSync(publicFilePath),
+      `فایل متناظر ${file} باید حتماً در public/datasets نیز وجود داشته باشد`
+    );
+
+    const srcContent = fs.readFileSync(srcFilePath, 'utf8');
+    const publicContent = fs.readFileSync(publicFilePath, 'utf8');
+
+    // مقایسه مستقیم متن/بایت‌ها
+    assert.strictEqual(
+      srcContent.trim(),
+      publicContent.trim(),
+      `محتوای فایل ${file} در src و public باید دقیقاً و بایت‌به‌بایت منطبق باشد و ناخواسته از هم فاصله نگیرند`
+    );
+
+    // مقایسه ساختار عمیق JSON
+    const srcObj = JSON.parse(srcContent);
+    const publicObj = JSON.parse(publicContent);
+    assert.deepStrictEqual(
+      srcObj,
+      publicObj,
+      `ساختار داده‌های JSON فایل ${file} باید در هر دو مسیر ۱۰۰٪ یکسان باشد`
+    );
+  }
+});
+
 console.log(`\n-----------------------------------------------------------`);
 console.log(`Curriculum Validation Results: ${passedTests}/${totalTests} tests passed successfully.`);
 console.log(`-----------------------------------------------------------\n`);
