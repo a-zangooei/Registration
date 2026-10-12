@@ -6,6 +6,9 @@ import {
   jalaliToGregorian,
   parseDateToLocalComponents,
   generateICSContent,
+  foldLine,
+  escapeICSText,
+  getDefaultSemesterStartDate,
 } from '../icsExport';
 import {
   validateJalaliDateDetails,
@@ -289,6 +292,179 @@ runTest('۷. رد رویداد نامعتبر در generateICSContent و تول�
   assert.equal(result.warnings.length, 2, 'باید دقیقاً دو هشدار برای میان‌ترم و پایان‌ترم ثبت شده باشد');
   assert.ok(result.warnings.some((w) => w.eventType === 'final' && w.rawDate === '1404/12/30'));
   assert.ok(result.warnings.some((w) => w.eventType === 'midterm' && w.rawDate === '1403/13/05'));
+});
+
+// =========================================================================
+// ۸. آزمون اعتبارسنجی رشته واقعی RFC 5545، فیلدهای DTSTART/DTEND، تایم‌زون و آلارم
+// =========================================================================
+runTest('۸. ارزیابی دقیق ساختار RFC 5545، ترتیب زمانی DTEND پس از DTSTART و شناسه زمان محلی Asia/Tehran', () => {
+  const courseWithSchedule: Course = {
+    id: 'c-rfc',
+    code: '9901',
+    name: 'آناتومی بالینی',
+    instructors: 'دکتر علوی',
+    units: { total: 3, theory: 2, practical: 1 },
+    theorySchedule: [
+      { day: 'شنبه', startTime: '08:00', endTime: '10:00', label: 'نظری' },
+    ],
+    finalExam: {
+      date: '1403/10/25',
+      time: '09:00',
+      type: 'final',
+    },
+  } as unknown as Course;
+
+  const res = generateICSContent([courseWithSchedule], 'male', {}, {
+    includeWeeklyClasses: true,
+    includeFinalExams: true,
+    addAlarm: true,
+    alarmMinutesBefore: 15,
+  });
+
+  const ics = res.content;
+
+  // ۱. سربرگ و استاندارد کلی
+  assert.ok(ics.includes('BEGIN:VCALENDAR'), 'باید تگ آغاز گاهشمار موجود باشد');
+  assert.ok(ics.includes('VERSION:2.0'), 'نسخه استاندارد گاهشمار باید 2.0 باشد');
+  assert.ok(ics.includes('BEGIN:VTIMEZONE'), 'بخش بلوک VTIMEZONE باید وجود داشته باشد');
+  assert.ok(ics.includes('TZID:Asia/Tehran'), 'شناسه تایم‌زون باید Asia/Tehran باشد');
+
+  // ۲. فرمت زمان شروع و پایان کلاس هفتگی
+  assert.ok(ics.includes('RRULE:FREQ=WEEKLY;COUNT=16;BYDAY=SA'), 'قاعده تکرار هفتگی شنبه‌ها');
+  assert.ok(ics.includes('DTSTART;TZID=Asia/Tehran:'), 'DTSTART با پارامتر تایم‌زون محلی');
+  assert.ok(ics.includes('DTEND;TZID=Asia/Tehran:'), 'DTEND با پارامتر تایم‌زون محلی');
+
+  // ۳. بررسی تاریخ تبدیل‌شده امتحان (1403/10/25 جلالی = 2025/01/14 میلادی)
+  // ساعت ۹ تا ۱۱ (۲ ساعت پس از شروع)
+  assert.ok(ics.includes('DTSTART;TZID=Asia/Tehran:20250114T090000'), 'شروع امتحان پایان‌ترم در تاریخ میلادی دقیق');
+  assert.ok(ics.includes('DTEND;TZID=Asia/Tehran:20250114T110000'), 'پایان امتحان پایان‌ترم دقیقا پس از ۲ ساعت');
+
+  // ۴. بررسی وجود VALARM
+  assert.ok(ics.includes('BEGIN:VALARM'), 'باید یادآور صوتی/نمایشی وجود داشته باشد');
+  assert.ok(ics.includes('TRIGGER:-PT15M'), 'تریگر هشدار کلاس قبل از ۱۵ دقیقه');
+  assert.ok(ics.includes('END:VCALENDAR'), 'باید تگ پایان گاهشمار موجود باشد');
+});
+
+// =========================================================================
+// ۹. آزمون پایداری شناسه‌ها (Stable UID) در خروجی‌های متوالی و عدم وابستگی به زمان
+// =========================================================================
+runTest('۹. پایداری و یکتایی UID در خروجی‌های متوالی برای جلوگیری از ایجاد رویدادهای تکراری', () => {
+  const courseA: Course = {
+    id: 'course-stable-1',
+    code: '1106',
+    name: 'بیوشیمی بالینی',
+    theorySchedule: [{ day: 'یکشنبه', startTime: '10:00', endTime: '12:00', label: 'نظری' }],
+    finalExam: { date: '1403/10/20', time: '10:00', type: 'final' },
+    midtermExam: { date: '1403/08/15', time: '08:30', type: 'midterm' },
+  } as unknown as Course;
+
+  // خروجی نوبت اول
+  const res1 = generateICSContent([courseA], 'male', {});
+  // خروجی نوبت دوم (حتی با تاخیر زمانی)
+  const res2 = generateICSContent([courseA], 'male', {});
+
+  const extractUids = (text: string) => {
+    const matches = text.match(/UID:[^\r\n]+/g) || [];
+    return matches.sort();
+  };
+
+  const uids1 = extractUids(res1.content);
+  const uids2 = extractUids(res2.content);
+
+  assert.equal(uids1.length, 3, 'باید ۳ رویداد (کلاس، میانترم، پایانترم) وجود داشته باشد');
+  assert.deepEqual(uids1, uids2, 'UIDهای تولید شده در دو بار خروجی متوالی باید کاملاً یکسان باشند');
+  assert.ok(!uids1[0].includes('undefined'));
+  assert.ok(uids1.some((u) => u.includes('class-course-stable-1')));
+  assert.ok(uids1.some((u) => u.includes('exam-midterm-course-stable-1-14030815')));
+  assert.ok(uids1.some((u) => u.includes('exam-final-course-stable-1-14031020')));
+});
+
+// =========================================================================
+// ۱۰. آزمون تفکیک رویدادهای تمام‌روزه (VALUE=DATE) از رویدادهای ساعت‌دار (DATE-TIME)
+// =========================================================================
+runTest('۱۰. آزمون تمایز رویداد تمام‌روزه (امتحان بدون ساعت) و رعایت مرز انحصاری DTEND روز بعد', () => {
+  const courseNoTime: Course = {
+    id: 'course-notime',
+    code: '1107',
+    name: 'روانشناسی سلامت',
+    theorySchedule: [],
+    finalExam: {
+      date: '1403/10/25', // 2025-01-14
+      time: undefined, // بدون ساعت مشخص
+      type: 'final',
+    },
+  } as unknown as Course;
+
+  const res = generateICSContent([courseNoTime], 'male', {}, { includeWeeklyClasses: false });
+  const ics = res.content;
+
+  // باید از قالب VALUE=DATE استفاده کند
+  assert.ok(ics.includes('DTSTART;VALUE=DATE:20250114'), 'فرمت تمام‌روزه DTSTART در تاریخ میلادی');
+  assert.ok(ics.includes('DTEND;VALUE=DATE:20250115'), 'فرمت تمام‌روزه DTEND باید مرز انحصاری روز بعد (20250115) باشد');
+  assert.ok(!ics.includes('DTSTART;TZID=Asia/Tehran:20250114T'), 'نباید از DATE-TIME زمانی برای امتحان بدون ساعت استفاده شود');
+});
+
+// =========================================================================
+// ۱۱. آزمون شکست خطوط فارسی بر پایه بایت‌های UTF-8 (Octet-based foldLine)
+// =========================================================================
+runTest('۱۱. آزمون شکست خطوط طولانی فارسی در مرز حداکثر ۷۵ بایت بدون نصف کردن کاراکترهای چندبایتی', () => {
+  const longPersianString = 'DESCRIPTION:آزمون نهایی متمرکز و هماهنگ درس علوم تشریح سیستم ادراری تناسلی با تدریس اساتید مجرب گروه علوم تشریح و آسیب‌شناسی دانشگاه علوم پزشکی تهران در سالن آزمون‌های الکترونیک شماره ۲ دانشکده پزشکی';
+
+  const folded = foldLine(longPersianString);
+  const lines = folded.split('\r\n');
+
+  assert.ok(lines.length > 1, 'متن طولانی باید به چند خط تقسیم شود');
+
+  const encoder = new TextEncoder();
+  lines.forEach((l, idx) => {
+    const byteLen = encoder.encode(l).length;
+    assert.ok(byteLen <= 75, `خط شماره ${idx + 1} با طول ${byteLen} بایت باید کمتر یا مساوی ۷۵ بایت باشد`);
+    if (idx > 0) {
+      assert.ok(l.startsWith(' '), 'خطوط ادامه طبق RFC 5545 باید با یک فاصله (Space) آغاز شوند');
+    }
+  });
+
+  // بازسازی متن پس از un-folding
+  const reconstructed = folded.replace(/\r\n /g, '');
+  assert.equal(reconstructed, longPersianString, 'متن پس از بازسازی و حذف فواصل continuation باید کاملاً حفظ شود');
+
+  // آزمون escaping کاراکترهای خاص
+  const specialText = 'درس، اول; بخش دوم \\ نکته مهم\nخط دوم';
+  const escaped = escapeICSText(specialText);
+  assert.ok(escaped.includes('\\,'));
+  assert.ok(escaped.includes('\\;'));
+  assert.ok(escaped.includes('\\\\'));
+  assert.ok(escaped.includes('\\n'));
+  assert.ok(!escaped.includes('\n'), 'کاراکتر newline نباید بدون اسکیپ در متن خروجی باقی بماند');
+});
+
+// =========================================================================
+// ۱۲. آزمون تاریخ شروع ترم (عدم Fallback خاموش به تاریخ امروز و محاسبه دقیق روز اول)
+// =========================================================================
+runTest('۱۲. آزمون تنظیم صریح و محاسبه هوشمند تاریخ شروع ترم بر اساس تقویم آموزشی', () => {
+  const courseSchedule: Course = {
+    id: 'course-sem-1',
+    code: '1108',
+    name: 'جنین‌شناسی',
+    theorySchedule: [{ day: 'دوشنبه', startTime: '08:00', endTime: '10:00', label: 'نظری' }],
+  } as unknown as Course;
+
+  // نیمسال اول ۱۴۰۳ با تاریخ صریح ۱ مهر ۱۴۰۳ (2024-09-22 یکشنبه است، پس اولین دوشنبه 2024-09-23 است)
+  const resFall = generateICSContent([courseSchedule], 'male', {}, {
+    customSemesterStartDateJalali: '1403/07/01',
+    semesterWeeks: 16,
+  });
+
+  assert.ok(resFall.content.includes('DTSTART;TZID=Asia/Tehran:20240923T080000'), 'اولین جلسه دوشنبه بعد از ۱ مهر باید 2024-09-23 باشد');
+
+  // نیمسال دوم با تاریخ صریح ۱۵ بهمن ۱۴۰۳ (2025-02-03 دوشنبه است)
+  const resSpring = generateICSContent([courseSchedule], 'male', {}, {
+    customSemesterStartDateJalali: '1403/11/15',
+    semesterWeeks: 14,
+  });
+
+  assert.ok(resSpring.content.includes('DTSTART;TZID=Asia/Tehran:20250203T080000'), 'اولین جلسه دوشنبه در شروع ترم بهمن باید 2025-02-03 باشد');
+  assert.ok(resSpring.content.includes('RRULE:FREQ=WEEKLY;COUNT=14;BYDAY=MO'), 'قاعده تکرار ۱۴ هفته‌ای برای دوشنبه‌ها');
 });
 
 console.log(`\n========================================`);

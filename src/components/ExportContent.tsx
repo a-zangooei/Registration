@@ -62,6 +62,8 @@ export const ExportContent: React.FC<ExportContentProps> = ({
   const [icsAlarm, setIcsAlarm] = useState(true);
   const [icsAlarmMinutes, setIcsAlarmMinutes] = useState(30);
   const [icsSemesterWeeks, setIcsSemesterWeeks] = useState(16);
+  const [icsSemesterSeason, setIcsSemesterSeason] = useState<'fall' | 'spring' | 'custom'>('fall');
+  const [icsCustomStart, setIcsCustomStart] = useState('۱۴۰۳/۰۷/۰۱');
   const [showAdvancedIcs, setShowAdvancedIcs] = useState(false);
 
   // Action: Export iCalendar (.ics)
@@ -69,6 +71,16 @@ export const ExportContent: React.FC<ExportContentProps> = ({
     try {
       setIsExportingICS(true);
       setExportWarnings([]);
+
+      let customStartDateString: string | undefined = undefined;
+      if (icsSemesterSeason === 'custom') {
+        customStartDateString = icsCustomStart;
+      } else if (icsSemesterSeason === 'fall') {
+        customStartDateString = '1403/07/01';
+      } else if (icsSemesterSeason === 'spring') {
+        customStartDateString = '1403/11/15';
+      }
+
       const result = generateICSContent(
         selectedCourses,
         gender,
@@ -80,6 +92,7 @@ export const ExportContent: React.FC<ExportContentProps> = ({
           addAlarm: icsAlarm,
           alarmMinutesBefore: icsAlarmMinutes,
           semesterWeeks: icsSemesterWeeks,
+          customSemesterStartDateJalali: customStartDateString,
         }
       );
 
@@ -641,6 +654,34 @@ export const ExportContent: React.FC<ExportContentProps> = ({
 
                 {showAdvancedIcs && (
                   <div className="mt-2 p-2.5 rounded-xl bg-white/95 border border-emerald-200/90 shadow-2xs space-y-2 text-[10px] animate-fadeIn text-slate-700">
+                    {/* Semester Timeline & Season */}
+                    <div className="space-y-1.5 border-b border-slate-100 pb-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-slate-700">دوره ترم تحصیلی:</span>
+                        <select
+                          value={icsSemesterSeason}
+                          onChange={(e) => setIcsSemesterSeason(e.target.value as any)}
+                          className="bg-slate-50 border border-slate-200 rounded-md px-1.5 py-0.5 text-[10px] font-bold text-slate-800"
+                        >
+                          <option value="fall">نیمسال اول (مهر ماه)</option>
+                          <option value="spring">نیمسال دوم (بهمن ماه)</option>
+                          <option value="custom">تاریخ سفارشی</option>
+                        </select>
+                      </div>
+                      {icsSemesterSeason === 'custom' && (
+                        <div className="flex items-center justify-between gap-1 pt-1">
+                          <span className="text-[9.5px] text-slate-600">شروع ترم:</span>
+                          <input
+                            type="text"
+                            value={icsCustomStart}
+                            onChange={(e) => setIcsCustomStart(e.target.value)}
+                            placeholder="۱۴۰۳/۰۷/۰۱"
+                            className="bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-[9.5px] font-mono text-left w-24 text-slate-800"
+                          />
+                        </div>
+                      )}
+                    </div>
+
                     {/* Semester Weeks Duration */}
                     <div className="flex items-center justify-between gap-1 border-b border-slate-100 pb-2">
                       <span className="font-medium text-slate-700">طول ترم تحصیلی:</span>

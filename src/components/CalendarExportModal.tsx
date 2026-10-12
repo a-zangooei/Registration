@@ -40,8 +40,10 @@ export const CalendarExportModal: React.FC<CalendarExportModalProps> = ({
   const [addAlarm, setAddAlarm] = useState(true);
   const [alarmMinutesBefore, setAlarmMinutesBefore] = useState(30);
 
-  // Semester duration
+  // Semester duration & start date
   const [semesterWeeks, setSemesterWeeks] = useState(16);
+  const [semesterSeason, setSemesterSeason] = useState<'fall' | 'spring' | 'custom'>('fall');
+  const [customSemesterStart, setCustomSemesterStart] = useState('۱۴۰۳/۰۷/۰۱');
 
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -55,6 +57,16 @@ export const CalendarExportModal: React.FC<CalendarExportModalProps> = ({
     try {
       setIsExporting(true);
       setExportWarnings([]);
+
+      let customStartDateString: string | undefined = undefined;
+      if (semesterSeason === 'custom') {
+        customStartDateString = customSemesterStart;
+      } else if (semesterSeason === 'fall') {
+        customStartDateString = '1403/07/01';
+      } else if (semesterSeason === 'spring') {
+        customStartDateString = '1403/11/15';
+      }
+
       const options: ICSOptions = {
         includeWeeklyClasses,
         includeMidtermExams,
@@ -62,6 +74,7 @@ export const CalendarExportModal: React.FC<CalendarExportModalProps> = ({
         addAlarm,
         alarmMinutesBefore,
         semesterWeeks,
+        customSemesterStartDateJalali: customStartDateString,
       };
 
       const result = generateICSContent(
@@ -215,6 +228,76 @@ export const CalendarExportModal: React.FC<CalendarExportModalProps> = ({
               </label>
             </div>
           </div>
+
+          {/* Section 1.5: Semester Timeline Settings */}
+          {includeWeeklyClasses && (
+            <div className="p-4 rounded-2xl bg-teal-50/50 border border-teal-200/80 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-teal-950 flex items-center gap-1.5">
+                  <CalendarDays className="w-4 h-4 text-teal-700" />
+                  <span>بازه زمانی و تاریخ شروع ترم:</span>
+                </label>
+                <div className="flex items-center gap-1.5 text-xs">
+                  <span className="text-[11px] text-teal-900 font-medium">طول ترم:</span>
+                  <select
+                    value={semesterWeeks}
+                    onChange={(e) => setSemesterWeeks(Number(e.target.value))}
+                    className="text-xs bg-white border border-teal-300 rounded-lg px-2 py-1 text-teal-950 font-bold focus:ring-1 focus:ring-teal-500"
+                  >
+                    <option value={14}>۱۴ هفته</option>
+                    <option value={16}>۱۶ هفته (استاندارد)</option>
+                    <option value={18}>۱۸ هفته</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                <label className={`p-2.5 rounded-xl border cursor-pointer select-none flex items-center gap-2 ${semesterSeason === 'fall' ? 'border-teal-500 bg-teal-100/60 font-bold text-teal-950' : 'border-slate-200 bg-white text-slate-700'}`}>
+                  <input
+                    type="radio"
+                    name="semesterSeasonModal"
+                    checked={semesterSeason === 'fall'}
+                    onChange={() => setSemesterSeason('fall')}
+                    className="text-teal-600 focus:ring-teal-500"
+                  />
+                  <span>نیمسال اول (مهر ماه)</span>
+                </label>
+                <label className={`p-2.5 rounded-xl border cursor-pointer select-none flex items-center gap-2 ${semesterSeason === 'spring' ? 'border-teal-500 bg-teal-100/60 font-bold text-teal-950' : 'border-slate-200 bg-white text-slate-700'}`}>
+                  <input
+                    type="radio"
+                    name="semesterSeasonModal"
+                    checked={semesterSeason === 'spring'}
+                    onChange={() => setSemesterSeason('spring')}
+                    className="text-teal-600 focus:ring-teal-500"
+                  />
+                  <span>نیمسال دوم (بهمن ماه)</span>
+                </label>
+                <label className={`p-2.5 rounded-xl border cursor-pointer select-none flex items-center gap-2 ${semesterSeason === 'custom' ? 'border-teal-500 bg-teal-100/60 font-bold text-teal-950' : 'border-slate-200 bg-white text-slate-700'}`}>
+                  <input
+                    type="radio"
+                    name="semesterSeasonModal"
+                    checked={semesterSeason === 'custom'}
+                    onChange={() => setSemesterSeason('custom')}
+                    className="text-teal-600 focus:ring-teal-500"
+                  />
+                  <span>تاریخ سفارشی</span>
+                </label>
+              </div>
+
+              {semesterSeason === 'custom' && (
+                <div className="pt-1 flex items-center gap-2">
+                  <span className="text-[11px] text-teal-900 font-medium">تاریخ شروع ترم (شمسی):</span>
+                  <input
+                    type="text"
+                    value={customSemesterStart}
+                    onChange={(e) => setCustomSemesterStart(e.target.value)}
+                    placeholder="۱۴۰۳/۰۷/۰۱"
+                    className="text-xs bg-white border border-teal-300 rounded-lg px-2.5 py-1 text-slate-800 font-mono text-left focus:ring-1 focus:ring-teal-500"
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Section 2: Alarm & Notification Settings (Detailed Explanations) */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
