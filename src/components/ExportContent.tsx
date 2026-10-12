@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Course, DayOfWeek, TimeSlot } from '../types';
 import { getActiveSlotsForCourse } from '../utils/conflictDetector';
 import { getShortCourseName } from '../utils/formatters';
-import { generateICSContent, downloadICSFile } from '../utils/icsExport';
+import { generateICSContent, downloadICSFile, ICSExportWarning } from '../utils/icsExport';
 import {
   Download,
   Printer,
@@ -19,6 +19,7 @@ import {
   Bell,
   CalendarDays,
   Info,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface ExportContentProps {
@@ -52,6 +53,7 @@ export const ExportContent: React.FC<ExportContentProps> = ({
   const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
   const [isRenderingImage, setIsRenderingImage] = useState(false);
   const [isExportingICS, setIsExportingICS] = useState(false);
+  const [exportWarnings, setExportWarnings] = useState<ICSExportWarning[]>([]);
 
   // iCalendar export options
   const [icsClasses, setIcsClasses] = useState(true);
@@ -66,7 +68,8 @@ export const ExportContent: React.FC<ExportContentProps> = ({
   const handleExportICS = () => {
     try {
       setIsExportingICS(true);
-      const icsContent = generateICSContent(
+      setExportWarnings([]);
+      const result = generateICSContent(
         selectedCourses,
         gender,
         selectedPracticalGroups,
@@ -82,10 +85,13 @@ export const ExportContent: React.FC<ExportContentProps> = ({
 
       downloadICSFile(
         `medical-schedule-${Date.now()}.ics`,
-        icsContent
+        result.content
       );
 
       setDownloadSuccess('ICS');
+      if (result.warnings && result.warnings.length > 0) {
+        setExportWarnings(result.warnings);
+      }
       setTimeout(() => setDownloadSuccess(null), 3500);
     } catch (err) {
       console.error('Failed to export ICS:', err);
@@ -708,6 +714,31 @@ export const ExportContent: React.FC<ExportContentProps> = ({
               </>
             )}
           </button>
+
+          {exportWarnings.length > 0 && (
+            <div className="mt-2.5 p-2 rounded-xl bg-amber-50 border border-amber-300 text-amber-950 text-[10px] space-y-1 text-right animate-fadeIn">
+              <div className="flex items-center justify-between font-bold text-amber-900">
+                <span className="flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3 text-amber-600 shrink-0" />
+                  <span>{exportWarnings.length} رویداد به دلیل تاریخ نامعتبر درج نشد:</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setExportWarnings([])}
+                  className="text-amber-700 hover:text-amber-950 text-[9px] font-semibold underline"
+                >
+                  بستن
+                </button>
+              </div>
+              <ul className="list-disc list-inside space-y-0.5 text-amber-900/90 pr-0.5 leading-snug">
+                {exportWarnings.map((w, idx) => (
+                  <li key={idx}>
+                    <strong>{w.courseName}</strong> ({w.eventType === 'midterm' ? 'میان‌ترم' : w.eventType === 'final' ? 'پایان‌ترم' : 'کلاس'}): {w.reason}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Option 2: PDF / Print */}

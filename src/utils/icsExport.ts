@@ -5,6 +5,12 @@
 
 import { Course, DayOfWeek } from '../types';
 import { getActiveSlotsForCourse } from './conflictDetector';
+import {
+  toGregorian,
+  isValidJalaaliDate as isValidJalaaliDateLib,
+  isLeapJalaaliYear as isLeapJalaaliYearLib,
+  jalaaliMonthLength as jalaaliMonthLengthLib,
+} from 'jalaali-js';
 
 // Map Persian days to RFC 5545 recurrence day codes
 const DAY_TO_RRULE_MAP: Record<DayOfWeek, string> = {
@@ -24,104 +30,184 @@ export interface LocalCalendarDateTime {
   minute: number;
 }
 
-/**
- * Converts a Jalali date string "YYYY/MM/DD" (e.g. "1403/08/30") or Gregorian string to local calendar components.
- */
-export function parseDateToLocalComponents(dateStr: string, timeStr = '08:30'): LocalCalendarDateTime {
-  const [hour, minute] = timeStr.split(':').map((t) => parseInt(t, 10) || 0);
-
-  // Check if Jalali (starts with 13xx or 14xx)
-  const parts = dateStr.split(/[\/\-]/).map((p) => parseInt(p, 10));
-  if (parts.length === 3 && parts[0] >= 1300 && parts[0] < 1500) {
-    const [jy, jm, jd] = parts;
-    const g = jalaliToGregorian(jy, jm, jd);
-    return {
-      year: g.gy,
-      month: g.gm,
-      day: g.gd,
-      hour,
-      minute,
-    };
-  }
-
-  // Fallback as standard ISO / Gregorian
-  const d = new Date(dateStr);
-  if (!isNaN(d.getTime())) {
-    return {
-      year: d.getFullYear(),
-      month: d.getMonth() + 1,
-      day: d.getDate(),
-      hour,
-      minute,
-    };
-  }
-
-  const now = new Date();
-  return {
-    year: now.getFullYear(),
-    month: now.getMonth() + 1,
-    day: now.getDate(),
-    hour,
-    minute,
-  };
+export interface GregorianDate {
+  gy: number;
+  gm: number;
+  gd: number;
 }
 
 /**
- * Standard Jalali to Gregorian conversion algorithm
+ * Normalizes Persian digits to ASCII English digits.
  */
-function jalaliToGregorian(jy: number, jm: number, jd: number) {
-  const g_days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  const j_days_in_month = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+function toEnglishDigits(str: string): string {
+  if (!str) return '';
+  return str.replace(/[۰-۹]/g, (d) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)));
+}
 
-  let gy = jy + 621;
-  const days =
-    (jy - 979) * 365 +
-    Math.floor((jy - 979) / 33) * 8 +
-    Math.floor(((jy - 979) % 33 + 3) / 4) +
-    979;
-
-  let total_days = 0;
-  for (let i = 0; i < jm - 1; ++i) {
-    total_days += j_days_in_month[i];
+/**
+ * Checks if a Jalali year is a leap year (کبیسه) using standard astronomical algorithm.
+ */
+export function isLeapJalaliYear(jy: number): boolean {
+  if (typeof jy !== 'number' || !Number.isInteger(jy) || jy <= 0) return false;
+  try {
+    return isLeapJalaaliYearLib(jy);
+  } catch {
+    return false;
   }
-  total_days += jd - 1;
+}
 
-  let g_day_no = days + total_days - 355666;
+/**
+ * Returns the exact allowable number of days in a given Jalali month.
+ * Months 1-6 have 31 days, months 7-11 have 30 days, month 12 has 29 days (30 in leap years).
+ */
+export function getJalaliDaysInMonth(jy: number, jm: number): number {
+  if (
+    typeof jy !== 'number' ||
+    typeof jm !== 'number' ||
+    !Number.isInteger(jy) ||
+    !Number.isInteger(jm) ||
+    jy <= 0 ||
+    jm < 1 ||
+    jm > 12
+  ) {
+    return 0;
+  }
+  try {
+    return jalaaliMonthLengthLib(jy, jm);
+  } catch {
+    return 0;
+  }
+}
 
-  let leap = false;
-  gy = 400 * Math.floor(g_day_no / 146097);
-  g_day_no = g_day_no % 146097;
+/**
+ * Validates whether a Jalali date (year, month, day) is legitimate.
+ */
+export function isValidJalaliDate(jy: number, jm: number, jd: number): boolean {
+  if (
+    typeof jy !== 'number' ||
+    typeof jm !== 'number' ||
+    typeof jd !== 'number' ||
+    !Number.isInteger(jy) ||
+    !Number.isInteger(jm) ||
+    !Number.isInteger(jd) ||
+    jy <= 0 ||
+    jm < 1 ||
+    jm > 12 ||
+    jd < 1
+  ) {
+    return false;
+  }
+  const maxDays = getJalaliDaysInMonth(jy, jm);
+  if (jd > maxDays) return false;
+  return isValidJalaaliDateLib(jy, jm, jd);
+}
 
-  if (g_day_no >= 36525) {
-    g_day_no--;
-    gy += 100 * Math.floor(g_day_no / 36524);
-    g_day_no = g_day_no % 36524;
-    if (g_day_no >= 365) g_day_no++;
-    else leap = true;
+/**
+ * Mathematically converts a valid Jalali date to its accurate Gregorian counterpart.
+ * Explicitly rejects invalid dates (returning null), preventing fake dates,
+ * out-of-range months/days, and negative/zero years.
+ */
+export function jalaliToGregorian(
+  jy: number,
+  jm: number,
+  jd: number
+): GregorianDate | null {
+  if (!isValidJalaliDate(jy, jm, jd)) {
+    return null;
   }
 
-  gy += 4 * Math.floor(g_day_no / 1461);
-  g_day_no %= 1461;
-
-  if (g_day_no >= 366) {
-    leap = false;
-    g_day_no--;
-    gy += Math.floor(g_day_no / 365);
-    g_day_no = g_day_no % 365;
-  }
-
-  let gm = 0;
-  for (let i = 0; i < 12; i++) {
-    const daysInM = i === 1 && (leap || (gy % 4 === 0 && gy % 100 !== 0) || gy % 400 === 0) ? 29 : g_days_in_month[i];
-    if (g_day_no < daysInM) {
-      gm = i + 1;
-      break;
+  try {
+    const res = toGregorian(jy, jm, jd);
+    if (!res || res.gy <= 0 || res.gm < 1 || res.gm > 12 || res.gd < 1 || res.gd > 31) {
+      return null;
     }
-    g_day_no -= daysInM;
+    return {
+      gy: res.gy,
+      gm: res.gm,
+      gd: res.gd,
+    };
+  } catch {
+    return null;
   }
-  const gd = g_day_no + 1;
+}
 
-  return { gy, gm, gd };
+/**
+ * Converts a Jalali date string "YYYY/MM/DD" (e.g. "1403/08/30") or Gregorian string to local calendar components.
+ * Returns null if the date is invalid, empty, or unparseable.
+ * CRITICAL: NEVER falls back to today's date!
+ */
+export function parseDateToLocalComponents(
+  dateStr: string,
+  timeStr = '08:30'
+): LocalCalendarDateTime | null {
+  if (!dateStr || typeof dateStr !== 'string' || !dateStr.trim()) {
+    return null;
+  }
+
+  const cleanDate = toEnglishDigits(dateStr.trim());
+
+  // Parse time components safely
+  let hour = 8;
+  let minute = 30;
+  if (timeStr && typeof timeStr === 'string') {
+    const cleanTime = toEnglishDigits(timeStr.trim());
+    const timeMatch = cleanTime.match(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/);
+    if (timeMatch) {
+      hour = parseInt(timeMatch[1], 10);
+      minute = parseInt(timeMatch[2], 10);
+    }
+  }
+
+  // 1. Check if Jalali pattern: "YYYY/MM/DD" or "YYYY-MM-DD"
+  const jalaliMatch = cleanDate.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+  if (jalaliMatch) {
+    const jy = parseInt(jalaliMatch[1], 10);
+    const jm = parseInt(jalaliMatch[2], 10);
+    const jd = parseInt(jalaliMatch[3], 10);
+
+    // If year is in common Jalali range (1200 - 1500)
+    if (jy >= 1200 && jy < 1600) {
+      const g = jalaliToGregorian(jy, jm, jd);
+      if (!g) {
+        return null; // Explicitly reject invalid Jalali dates
+      }
+      return {
+        year: g.gy,
+        month: g.gm,
+        day: g.gd,
+        hour,
+        minute,
+      };
+    }
+  }
+
+  // 2. Check if standard ISO / Gregorian format (e.g. 2024-11-20 or 2024/11/20)
+  const gregMatch = cleanDate.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+  if (gregMatch) {
+    const gy = parseInt(gregMatch[1], 10);
+    const gm = parseInt(gregMatch[2], 10);
+    const gd = parseInt(gregMatch[3], 10);
+
+    if (gy >= 1900 && gy <= 2100 && gm >= 1 && gm <= 12 && gd >= 1 && gd <= 31) {
+      const d = new Date(gy, gm - 1, gd);
+      if (
+        d.getFullYear() === gy &&
+        d.getMonth() === gm - 1 &&
+        d.getDate() === gd
+      ) {
+        return {
+          year: gy,
+          month: gm,
+          day: gd,
+          hour,
+          minute,
+        };
+      }
+    }
+    return null;
+  }
+
+  return null;
 }
 
 /**
@@ -224,16 +310,30 @@ export interface ICSOptions {
   semesterStartDate?: Date;
 }
 
+export interface ICSExportWarning {
+  courseId: string;
+  courseName: string;
+  eventType: 'class' | 'midterm' | 'final';
+  rawDate: string;
+  reason: string;
+}
+
+export interface ICSGenerationResult {
+  content: string;
+  warnings: ICSExportWarning[];
+}
+
 /**
  * Generates RFC 5545 .ics calendar content with explicit VTIMEZONE Asia/Tehran
  * for maximum compatibility with Samsung Calendar, Google Calendar, iOS, and Outlook.
+ * Returns both the generated .ics content and any warnings regarding skipped invalid events.
  */
 export function generateICSContent(
   selectedCourses: Course[],
   gender: 'male' | 'female',
   selectedPracticalGroups: Record<string, string>,
   options: ICSOptions = {}
-): string {
+): ICSGenerationResult {
   const {
     includeWeeklyClasses = true,
     includeMidtermExams = true,
@@ -245,6 +345,7 @@ export function generateICSContent(
   } = options;
 
   const events: string[] = [];
+  const warnings: ICSExportWarning[] = [];
   const nowUtcStr = formatToUTC(new Date());
 
   // 1. Weekly Class Events (Recurring)
@@ -260,7 +361,16 @@ export function generateICSContent(
         if (slot.isTentative) continue; // Skip unconfirmed floating lab slots
 
         const rruleDay = DAY_TO_RRULE_MAP[slot.day];
-        if (!rruleDay) continue;
+        if (!rruleDay) {
+          warnings.push({
+            courseId: course.id,
+            courseName: course.name,
+            eventType: 'class',
+            rawDate: slot.day,
+            reason: `روز برگزاری کلاس «${slot.day}» در درس «${course.name}» نامعتبر است و درج نشد.`,
+          });
+          continue;
+        }
 
         const dateComp = getFirstOccurrenceDate(slot.day, semesterStartDate);
         const [startH, startM] = slot.startTime.split(':').map((v) => parseInt(v, 10) || 0);
@@ -310,11 +420,22 @@ export function generateICSContent(
     for (const course of selectedCourses) {
       if (course.midtermExam && course.midtermExam.date) {
         const timeStr = course.midtermExam.time || '08:30';
-        const [h, m] = timeStr.split(':').map((v) => parseInt(v, 10) || 0);
         const dt = parseDateToLocalComponents(course.midtermExam.date, timeStr);
 
+        if (!dt) {
+          warnings.push({
+            courseId: course.id,
+            courseName: course.name,
+            eventType: 'midterm',
+            rawDate: course.midtermExam.date,
+            reason: `تاریخ امتحان میان‌ترم «${course.midtermExam.date}» نامعتبر است و این رویداد در گاهشمار درج نشد.`,
+          });
+          continue; // Do NOT generate invalid event or silent fallback to today!
+        }
+
+        const h = dt.hour;
         const dtStart = formatLocalDateTime(dt);
-        const dtEnd = formatLocalDateTime({ ...dt, hour: h + 2 }); // 2 hours duration
+        const dtEnd = formatLocalDateTime({ ...dt, hour: (h + 2) % 24 }); // 2 hours duration
 
         const uid = `exam-midterm-${course.id}-${course.midtermExam.date.replace(/[\/\-]/g, '')}-${Date.now()}@med-planner`;
         const summary = `امتحان میان‌ترم ${course.name}`;
@@ -360,11 +481,22 @@ export function generateICSContent(
     for (const course of selectedCourses) {
       if (course.finalExam && course.finalExam.date) {
         const timeStr = course.finalExam.time || '08:30';
-        const [h, m] = timeStr.split(':').map((v) => parseInt(v, 10) || 0);
         const dt = parseDateToLocalComponents(course.finalExam.date, timeStr);
 
+        if (!dt) {
+          warnings.push({
+            courseId: course.id,
+            courseName: course.name,
+            eventType: 'final',
+            rawDate: course.finalExam.date,
+            reason: `تاریخ امتحان پایان‌ترم «${course.finalExam.date}» نامعتبر است و این رویداد در گاهشمار درج نشد.`,
+          });
+          continue; // Do NOT generate invalid event or silent fallback to today!
+        }
+
+        const h = dt.hour;
         const dtStart = formatLocalDateTime(dt);
-        const dtEnd = formatLocalDateTime({ ...dt, hour: h + 2 }); // 2 hours duration
+        const dtEnd = formatLocalDateTime({ ...dt, hour: (h + 2) % 24 }); // 2 hours duration
 
         const uid = `exam-final-${course.id}-${course.finalExam.date.replace(/[\/\-]/g, '')}-${Date.now()}@med-planner`;
         const summary = `امتحان پایان‌ترم ${course.name}`;
@@ -433,7 +565,10 @@ export function generateICSContent(
     'END:VCALENDAR',
   ];
 
-  return icsLines.join('\r\n');
+  return {
+    content: icsLines.join('\r\n'),
+    warnings,
+  };
 }
 
 /**

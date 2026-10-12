@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
-    "test": "tsx src/utils/__tests__/examConflict.test.ts && tsx src/utils/__tests__/curriculumValidation.test.ts && tsx src/utils/__tests__/pwaUpdate.test.ts && tsx src/utils/__tests__/ciReproducibility.test.ts && tsx src/utils/__tests__/conflictResolver.test.ts && tsx src/utils/__tests__/upcomingClass.test.ts",
+    "test": "tsx src/utils/__tests__/examConflict.test.ts && tsx src/utils/__tests__/curriculumValidation.test.ts && tsx src/utils/__tests__/pwaUpdate.test.ts && tsx src/utils/__tests__/ciReproducibility.test.ts && tsx src/utils/__tests__/conflictResolver.test.ts && tsx src/utils/__tests__/upcomingClass.test.ts && tsx src/utils/__tests__/jalaliCalendarValidation.test.ts",
     "termux:setup": "npm install --save-dev lightningcss-android-arm64 @tailwindcss/oxide-android-arm64 @rollup/rollup-android-arm64 @esbuild/android-arm64"
   },
   "engines": {
@@ -19,6 +19,7 @@
     "@google/genai": "^2.4.0",
     "@tailwindcss/vite": "^4.1.14",
     "@vitejs/plugin-react": "^5.0.4",
+    "jalaali-js": "^2.0.1",
     "lucide-react": "^0.546.0",
     "react": "^19.0.1",
     "react-dom": "^19.0.1"

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Course } from '../types';
-import { generateICSContent, downloadICSFile, ICSOptions } from '../utils/icsExport';
+import { generateICSContent, downloadICSFile, ICSOptions, ICSExportWarning } from '../utils/icsExport';
 import {
   Calendar,
   CalendarDays,
@@ -14,6 +14,7 @@ import {
   BookOpen,
   CalendarCheck,
   HelpCircle,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface CalendarExportModalProps {
@@ -44,6 +45,7 @@ export const CalendarExportModal: React.FC<CalendarExportModalProps> = ({
 
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [exportWarnings, setExportWarnings] = useState<ICSExportWarning[]>([]);
 
   if (!isOpen) return null;
 
@@ -52,6 +54,7 @@ export const CalendarExportModal: React.FC<CalendarExportModalProps> = ({
   const handleExport = () => {
     try {
       setIsExporting(true);
+      setExportWarnings([]);
       const options: ICSOptions = {
         includeWeeklyClasses,
         includeMidtermExams,
@@ -61,15 +64,18 @@ export const CalendarExportModal: React.FC<CalendarExportModalProps> = ({
         semesterWeeks,
       };
 
-      const icsContent = generateICSContent(
+      const result = generateICSContent(
         selectedCourses,
         gender,
         selectedPracticalGroups,
         options
       );
 
-      downloadICSFile(`medical-schedule-${Date.now()}.ics`, icsContent);
+      downloadICSFile(`medical-schedule-${Date.now()}.ics`, result.content);
       setDownloadSuccess(true);
+      if (result.warnings && result.warnings.length > 0) {
+        setExportWarnings(result.warnings);
+      }
       setTimeout(() => setDownloadSuccess(false), 4000);
     } catch (err) {
       console.error('Failed to export calendar:', err);
@@ -282,6 +288,32 @@ export const CalendarExportModal: React.FC<CalendarExportModalProps> = ({
               </li>
             </ol>
           </div>
+
+          {/* Export Warnings Banner for Skipped Invalid Events */}
+          {exportWarnings.length > 0 && (
+            <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-950 text-xs space-y-2 animate-fadeIn">
+              <div className="flex items-center justify-between font-bold text-amber-900">
+                <span className="flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>توجه: {exportWarnings.length} رویداد به دلیل تاریخ نامعتبر در فایل گاهشمار قرار نگرفتند:</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setExportWarnings([])}
+                  className="text-amber-700 hover:text-amber-950 text-[11px] font-semibold underline"
+                >
+                  بستن پیام
+                </button>
+              </div>
+              <ul className="list-disc list-inside space-y-1 text-[11px] text-amber-900/90 pr-1 leading-relaxed">
+                {exportWarnings.map((w, idx) => (
+                  <li key={idx}>
+                    <strong>{w.courseName}</strong> ({w.eventType === 'midterm' ? 'آزمون میان‌ترم' : w.eventType === 'final' ? 'آزمون پایان‌ترم' : 'جلسه کلاس'}): {w.reason}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Modal Footer */}

@@ -1,5 +1,10 @@
 import { Course, CurriculumDataset } from '../types';
 import medicalDatasetJson from './datasets/term-05-fall-1403.json';
+import {
+  isValidJalaaliDate as isValidJalaaliDateLib,
+  isLeapJalaaliYear as isLeapJalaaliYearLib,
+  jalaaliMonthLength as jalaaliMonthLengthLib,
+} from 'jalaali-js';
 
 // Single Official Curriculum: Medical Basic Sciences (Semesters 3, 4, 5)
 export const DEFAULT_CURRICULUM: CurriculumDataset = medicalDatasetJson as unknown as CurriculumDataset;
@@ -33,19 +38,96 @@ function parseTimeToMinutes(timeStr: string): number | null {
   return parseInt(match[1], 10) * 60 + parseInt(match[2], 10);
 }
 
-function isValidJalaliDate(dateStr: string): boolean {
-  if (!dateStr || typeof dateStr !== 'string') return false;
+export interface JalaliDateValidationResult {
+  valid: boolean;
+  reason?: string;
+  year?: number;
+  month?: number;
+  day?: number;
+}
+
+/**
+ * Validates a Jalali date string thoroughly (format, range, month days, leap year Esfand).
+ */
+export function validateJalaliDateDetails(dateStr: string): JalaliDateValidationResult {
+  if (!dateStr || typeof dateStr !== 'string') {
+    return { valid: false, reason: 'تاریخ مشخص نشده یا نوع آن رشته متنی نیست.' };
+  }
   const clean = toEnglishDigits(dateStr.trim());
   const match = clean.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
-  if (!match) return false;
+  if (!match) {
+    return {
+      valid: false,
+      reason: `الگوی نگارشی تاریخ «${dateStr}» نامعتبر است (الگوی معتبر: YYYY/MM/DD مانند ۱۴۰۳/۱۰/۱۵).`,
+    };
+  }
   const year = parseInt(match[1], 10);
   const month = parseInt(match[2], 10);
   const day = parseInt(match[3], 10);
-  if (year < 1300 || year > 1500) return false;
-  if (month < 1 || month > 12) return false;
-  if (day < 1 || day > 31) return false;
-  if (month > 6 && day > 30) return false;
-  return true;
+
+  if (year < 1300 || year > 1500) {
+    return {
+      valid: false,
+      reason: `سال «${year}» خارج از بازه مجاز دوره‌های آموزشی (۱۳۰۰ تا ۱۵۰۰) است.`,
+      year,
+      month,
+      day,
+    };
+  }
+  if (month < 1 || month > 12) {
+    return {
+      valid: false,
+      reason: `شماره ماه «${month}» نامعتبر است (ماه‌های معتبر تقویم جلالی: ۱ تا ۱۲).`,
+      year,
+      month,
+      day,
+    };
+  }
+  if (day < 1) {
+    return {
+      valid: false,
+      reason: `شماره روز «${day}» نامعتبر است (روز صفر یا منفی در گاهشمار وجود ندارد).`,
+      year,
+      month,
+      day,
+    };
+  }
+
+  const maxDays = jalaaliMonthLengthLib(year, month);
+  if (day > maxDays) {
+    if (month === 12 && day === 30 && !isLeapJalaaliYearLib(year)) {
+      return {
+        valid: false,
+        reason: `سال ${year} یک سال کبیسه نیست؛ بنابراین اسفند ۲۹ روز دارد و روز ۳۰ اسفند نامعتبر است.`,
+        year,
+        month,
+        day,
+      };
+    }
+    return {
+      valid: false,
+      reason: `روز «${day}» در ماه ${month} نامعتبر است (حداکثر روزهای مجاز در این ماه: ${maxDays} روز).`,
+      year,
+      month,
+      day,
+    };
+  }
+
+  if (!isValidJalaaliDateLib(year, month, day)) {
+    return {
+      valid: false,
+      reason: `ترکیب تاریخ جلالی «${year}/${month}/${day}» بر مبنای تقویم رسمی نامعتبر است.`,
+      year,
+      month,
+      day,
+    };
+  }
+
+  return { valid: true, year, month, day };
+}
+
+export function isValidJalaliDate(dateStr: string): boolean {
+  return validateJalaliDateDetails(dateStr).valid;
 }
 
 function validateTimeSlots(slots: any[], context: string, errors: string[]) {
@@ -91,10 +173,17 @@ function validateExamDetail(exam: any, context: string, errors: string[]) {
     errors.push(`[${context}] ساختار اطلاعات امتحان نامعتبر است.`);
     return;
   }
-  if (!exam.date || typeof exam.date !== 'string' || !isValidJalaliDate(exam.date)) {
+  if (!exam.date || typeof exam.date !== 'string') {
     errors.push(
       `[${context}] [فیلد: date] تاریخ امتحان «${exam.date || ''}» نامعتبر است (الگوی معتبر تقویم شمسی: YYYY/MM/DD مانند ۱۴۰۳/۱۰/۱۵).`
     );
+  } else {
+    const dateRes = validateJalaliDateDetails(exam.date);
+    if (!dateRes.valid) {
+      errors.push(
+        `[${context}] [فیلد: date] تاریخ امتحان «${exam.date}» نامعتبر است: ${dateRes.reason}`
+      );
+    }
   }
   if (exam.type && exam.type !== 'midterm' && exam.type !== 'final') {
     errors.push(`[${context}] [فیلد: type] نوع امتحان باید 'midterm' یا 'final' باشد.`);
