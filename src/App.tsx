@@ -317,11 +317,13 @@ export default function App() {
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-4 sm:mt-5 space-y-4 sm:space-y-5 no-print">
         
-        {/* Dataset Verification Banner (Prominent top banner when dataset is in needs_review state) */}
-        <DatasetVerificationBanner
-          curriculum={curriculum}
-          onOpenReviewModal={() => setIsReviewModalOpen(true)}
-        />
+        {/* Dataset Verification Banner: always visible on desktop, on mobile only visible in courses tab */}
+        <div className={mobileTab === 'courses' ? 'block' : 'hidden lg:block'}>
+          <DatasetVerificationBanner
+            curriculum={curriculum}
+            onOpenReviewModal={() => setIsReviewModalOpen(true)}
+          />
+        </div>
 
         {/* Unit Manager and Rules Bar: always visible on desktop, on mobile only visible in courses tab */}
         <div className={mobileTab === 'courses' ? 'block' : 'hidden lg:block'}>

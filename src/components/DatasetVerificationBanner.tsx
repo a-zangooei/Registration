@@ -5,11 +5,13 @@ import { CurriculumDataset } from '../types';
 interface DatasetVerificationBannerProps {
   curriculum: CurriculumDataset;
   onOpenReviewModal: () => void;
+  className?: string;
 }
 
 export const DatasetVerificationBanner: React.FC<DatasetVerificationBannerProps> = ({
   curriculum,
   onOpenReviewModal,
+  className = '',
 }) => {
   // Only display when the verification status is explicitly 'needs_review'
   if (curriculum.verificationStatus !== 'needs_review') {
@@ -19,7 +21,7 @@ export const DatasetVerificationBanner: React.FC<DatasetVerificationBannerProps>
   return (
     <aside
       aria-label="هشدار ممیزی اطلاعات آموزشی"
-      className="bg-amber-50/95 border border-amber-300 text-amber-950 rounded-2xl p-3 sm:p-4 shadow-xs transition-all no-print"
+      className={`bg-amber-50/95 border border-amber-300 text-amber-950 rounded-2xl p-3 sm:p-4 shadow-xs transition-all no-print ${className}`}
     >
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
         

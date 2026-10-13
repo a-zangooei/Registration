@@ -104,3 +104,22 @@ body {
   }
 }
 
+/* ========================================================================= */
+/* Responsive Tables & Mobile Touch Ergonomics                               */
+/* ========================================================================= */
+.table-responsive-scroll,
+.responsive-table-scroll,
+[data-responsive-table] {
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  touch-action: auto; /* Allows seamless vertical scrolling of page/modal anywhere user touches */
+  overscroll-behavior: auto;
+}
+
+.table-responsive-scroll table,
+.responsive-table-scroll table,
+[data-responsive-table] table {
+  touch-action: auto;
+}
+

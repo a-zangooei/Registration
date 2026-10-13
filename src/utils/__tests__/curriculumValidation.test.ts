@@ -384,6 +384,58 @@ runTest('۱۹. تضمین تطابق کامل بایت‌به‌بایت و عم
   }
 });
 
+// ۲۰. ارگونومی جداول در موبایل: عدم مسدودسازی اسکرول عمودی با touch-pan-x و وجود کانتینر ریسپانسیو استاندارد
+runTest('۲۰. تضمین عدم مسدودسازی اسکرول لمسی عمودی در کانتینرهای جدول و پشتیبانی touch-auto', async () => {
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+
+  // بررسی فایل‌های کامپوننت و css
+  const modalFile = path.resolve('src/components/DatasetReviewModal.tsx');
+  const modalContent = fs.readFileSync(modalFile, 'utf8');
+
+  // نباید touch-pan-x وجود داشته باشد زیرا اسکرول عمودی کاربر با لمس جدول را قفل می‌کند
+  assert.strictEqual(
+    modalContent.includes('touch-pan-x'),
+    false,
+    'استفاده از touch-pan-x ممنوع است چون باعث قفل شدن اسکرول عمودی در گوشی می‌شود'
+  );
+
+  // باید از کانتینر ریسپانسیو اختصاصی استفاده شده باشد
+  assert.ok(
+    modalContent.includes('ResponsiveTableContainer'),
+    'جداول باید در ResponsiveTableContainer محصور شده باشند'
+  );
+
+  // بررسی فایل کانتینر ریسپانسیو
+  const responsiveComponentFile = path.resolve('src/components/ResponsiveTableContainer.tsx');
+  assert.ok(
+    fs.existsSync(responsiveComponentFile),
+    'کامپوننت ResponsiveTableContainer باید در پروژه وجود داشته باشد'
+  );
+
+  const compContent = fs.readFileSync(responsiveComponentFile, 'utf8');
+  assert.ok(
+    compContent.includes('touch-auto') || compContent.includes('touch-pan-y'),
+    'کانتینر ریسپانسیو باید امکان اسکرول عمودی روان (touch-auto) را فراهم کند'
+  );
+});
+
+// ۲۱. ارگونومی موبایل: نمایش بنر «وضعیت آموزشی و بازبینی» منحصراً در تب دروس روی دستگاه‌های موبایل
+runTest('۲۱. بنر وضعیت آموزشی و بازبینی در گوشی فقط در تب دروس نمایش داده شود و نه در برنامه هفتگی', async () => {
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+
+  const appFile = path.resolve('src/App.tsx');
+  const appContent = fs.readFileSync(appFile, 'utf8');
+
+  // بررسی کانتینر پیرامون DatasetVerificationBanner در App.tsx
+  assert.ok(
+    appContent.includes("mobileTab === 'courses' ? 'block' : 'hidden lg:block'") &&
+      appContent.includes('DatasetVerificationBanner'),
+    'بنر وضعیت آموزشی و بازبینی باید در موبایل صرفاً هنگام فعال بودن تب دروس (mobileTab === "courses") نمایش یابد'
+  );
+});
+
 console.log(`\n-----------------------------------------------------------`);
 console.log(`Curriculum Validation Results: ${passedTests}/${totalTests} tests passed successfully.`);
 console.log(`-----------------------------------------------------------\n`);

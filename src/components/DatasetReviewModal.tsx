@@ -14,6 +14,7 @@ import {
   FileCheck2,
 } from 'lucide-react';
 import { CurriculumDataset, Course } from '../types';
+import { ResponsiveTableContainer } from './ResponsiveTableContainer';
 
 interface DatasetReviewModalProps {
   isOpen: boolean;
@@ -247,26 +248,26 @@ export const DatasetReviewModal: React.FC<DatasetReviewModalProps> = ({
                 <span className="text-rose-700 font-medium">تمامی تاریخ‌ها نیازمند بازبینی و تأیید نهایی هستند</span>
               </div>
 
-              <div className="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
-                <table className="w-full text-right text-xs">
+              <ResponsiveTableContainer columnCount={6}>
+                <table className="w-full min-w-[620px] text-right text-xs">
                   <thead className="bg-slate-100/80 text-slate-700 font-semibold border-b border-slate-200">
                     <tr>
-                      <th className="p-3">نام و کد درس</th>
-                      <th className="p-3">نوع آزمون</th>
-                      <th className="p-3">تاریخ ثبت‌شده</th>
-                      <th className="p-3">ساعت</th>
-                      <th className="p-3">وضعیت اعتبارسنجی</th>
-                      <th className="p-3">توضیحات</th>
+                      <th className="p-3 whitespace-nowrap min-w-[140px]">نام و کد درس</th>
+                      <th className="p-3 whitespace-nowrap min-w-[120px]">نوع آزمون</th>
+                      <th className="p-3 whitespace-nowrap min-w-[100px]">تاریخ ثبت‌شده</th>
+                      <th className="p-3 whitespace-nowrap min-w-[70px]">ساعت</th>
+                      <th className="p-3 whitespace-nowrap min-w-[130px]">وضعیت اعتبارسنجی</th>
+                      <th className="p-3 min-w-[140px]">توضیحات</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-800">
                     {filteredExams.map((item, idx) => (
                       <tr key={`${item.courseId}-${item.examType}-${idx}`} className="hover:bg-slate-50/70 transition-colors">
                         <td className="p-3 font-medium">
-                          <div>{item.courseName}</div>
+                          <div className="truncate max-w-[180px] sm:max-w-none">{item.courseName}</div>
                           <div className="text-[11px] text-slate-500 font-mono">{item.courseCode}</div>
                         </td>
-                        <td className="p-3">
+                        <td className="p-3 whitespace-nowrap">
                           <span className="text-slate-700">
                             {item.examType === 'midterm' ? (
                               item.isFullDeletion ? 'میان‌ترم (حذفی کامل)' : 'میان‌ترم (حذفی بخشی)'
@@ -275,15 +276,15 @@ export const DatasetReviewModal: React.FC<DatasetReviewModalProps> = ({
                             )}
                           </span>
                         </td>
-                        <td className="p-3">
+                        <td className="p-3 whitespace-nowrap">
                           <span className="font-mono font-semibold text-rose-700 tabular-nums">
                             {item.date}
                           </span>
                         </td>
-                        <td className="p-3 font-mono tabular-nums text-slate-600">
+                        <td className="p-3 font-mono tabular-nums text-slate-600 whitespace-nowrap">
                           {item.time || 'نامشخص'}
                         </td>
-                        <td className="p-3">
+                        <td className="p-3 whitespace-nowrap">
                           <span className="text-[11px] text-amber-800 font-medium">
                             تأییدنشده (عدم انطباق سال)
                           </span>
@@ -302,7 +303,7 @@ export const DatasetReviewModal: React.FC<DatasetReviewModalProps> = ({
                     )}
                   </tbody>
                 </table>
-              </div>
+              </ResponsiveTableContainer>
             </div>
           )}
 
@@ -314,31 +315,31 @@ export const DatasetReviewModal: React.FC<DatasetReviewModalProps> = ({
                 <span>سقف مجاز انتخاب: ۱۲ تا ۲۰ واحد</span>
               </div>
 
-              <div className="border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
-                <table className="w-full text-right text-xs">
+              <ResponsiveTableContainer columnCount={7}>
+                <table className="w-full min-w-[760px] text-right text-xs">
                   <thead className="bg-slate-100/80 text-slate-700 font-semibold border-b border-slate-200">
                     <tr>
-                      <th className="p-3">کد درس</th>
-                      <th className="p-3">عنوان درس</th>
-                      <th className="p-3">واحدها</th>
-                      <th className="p-3">مدرس / اساتید</th>
-                      <th className="p-3">زمان نظری</th>
-                      <th className="p-3">گروه‌های عملی</th>
-                      <th className="p-3">پیش‌نیازها</th>
+                      <th className="p-3 whitespace-nowrap min-w-[80px]">کد درس</th>
+                      <th className="p-3 whitespace-nowrap min-w-[140px]">عنوان درس</th>
+                      <th className="p-3 whitespace-nowrap min-w-[90px]">واحدها</th>
+                      <th className="p-3 whitespace-nowrap min-w-[130px]">مدرس / اساتید</th>
+                      <th className="p-3 whitespace-nowrap min-w-[140px]">زمان نظری</th>
+                      <th className="p-3 whitespace-nowrap min-w-[90px]">گروه‌های عملی</th>
+                      <th className="p-3 whitespace-nowrap min-w-[110px]">پیش‌نیازها</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-800">
                     {filteredCourses.map((c) => (
                       <tr key={c.id} className="hover:bg-slate-50/70 transition-colors">
-                        <td className="p-3 font-mono text-[11px] text-slate-600">{c.code}</td>
-                        <td className="p-3 font-medium text-slate-900">{c.name}</td>
-                        <td className="p-3 tabular-nums">
+                        <td className="p-3 font-mono text-[11px] text-slate-600 whitespace-nowrap">{c.code}</td>
+                        <td className="p-3 font-medium text-slate-900 whitespace-nowrap">{c.name}</td>
+                        <td className="p-3 tabular-nums whitespace-nowrap">
                           {c.units.total} <span className="text-slate-500">({c.units.theory}ن / {c.units.practical}ع)</span>
                         </td>
-                        <td className="p-3 text-slate-700 text-[11px] max-w-[140px] truncate" title={c.instructors}>
+                        <td className="p-3 text-slate-700 text-[11px] max-w-[160px] truncate" title={c.instructors}>
                           {c.instructors}
                         </td>
-                        <td className="p-3 text-slate-600 text-[11px]">
+                        <td className="p-3 text-slate-600 text-[11px] whitespace-nowrap">
                           {c.theorySchedule.length > 0 ? (
                             c.theorySchedule.map((s, i) => (
                               <div key={i}>{s.day} {s.startTime}-{s.endTime}</div>
@@ -349,10 +350,10 @@ export const DatasetReviewModal: React.FC<DatasetReviewModalProps> = ({
                             <span className="text-slate-400">فاقد نظری</span>
                           )}
                         </td>
-                        <td className="p-3 tabular-nums text-slate-700">
+                        <td className="p-3 tabular-nums text-slate-700 whitespace-nowrap">
                           {c.practicalGroups.length > 0 ? `${c.practicalGroups.length} گروه` : '—'}
                         </td>
-                        <td className="p-3 text-slate-600 text-[11px]">
+                        <td className="p-3 text-slate-600 text-[11px] whitespace-nowrap">
                           {c.prerequisites.length > 0 ? (
                             c.prerequisites.join('، ')
                           ) : (
@@ -370,7 +371,7 @@ export const DatasetReviewModal: React.FC<DatasetReviewModalProps> = ({
                     )}
                   </tbody>
                 </table>
-              </div>
+              </ResponsiveTableContainer>
             </div>
           )}
 
